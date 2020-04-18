@@ -68,21 +68,21 @@ func run() error {
 				canvas,
 				"mousedown",
 				func(event js.Value) {
-					game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseDown, event))
+					game.ReceiveMouseEvent(translateMouseEvent(zoom, domevents.FromMouseEvent(engine.MouseDown, event)))
 				},
 			)
 			dom.AddEventListener(
 				canvas,
 				"mouseup",
 				func(event js.Value) {
-					game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseUp, event))
+					game.ReceiveMouseEvent(translateMouseEvent(zoom, domevents.FromMouseEvent(engine.MouseUp, event)))
 				},
 			)
 			dom.AddEventListener(
 				canvas,
 				"mousemove",
 				func(event js.Value) {
-					game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseMove, event))
+					game.ReceiveMouseEvent(translateMouseEvent(zoom, domevents.FromMouseEvent(engine.MouseMove, event)))
 				},
 			)
 
@@ -127,3 +127,9 @@ func run() error {
 const msPerTick = 40
 
 const zoom = 2
+
+func translateMouseEvent(zoom int, event engine.MouseEvent) engine.MouseEvent {
+	event.X = event.X / zoom
+	event.Y = event.Y / zoom
+	return event
+}
