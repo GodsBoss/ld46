@@ -86,10 +86,10 @@ func run() error {
 						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseMove, event))
 					},
 				)
-				ticker := time.NewTicker(time.Millisecond * 40)
+				ticker := time.NewTicker(time.Millisecond * msPerTick)
 				for {
 					<-ticker.C
-					game.Tick(40)
+					game.Tick(msPerTick)
 				}
 			}()
 		},
@@ -100,3 +100,5 @@ func run() error {
 	)
 	return <-errsChan
 }
+
+const msPerTick = 40
