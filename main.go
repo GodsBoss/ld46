@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/GodsBoss/ld46/pkg/console"
 	"github.com/GodsBoss/ld46/pkg/dom"
+	"github.com/GodsBoss/ld46/pkg/errors"
 )
 
 func main() {
@@ -30,5 +31,23 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	return gameElement.AppendChild(canvas)
+	err = gameElement.AppendChild(canvas)
+	if err != nil {
+		return err
+	}
+	img, err := doc.CreateImageElement("gfx.png")
+	if err != nil {
+		return err
+	}
+	errsChan := make(chan error)
+	img.On(
+		func() {
+			// TODO: Start game!
+		},
+		func(err interface{}) {
+			errsChan <- errors.String("loading game gfx failed")
+			close(errsChan)
+		},
+	)
+	return <-errsChan
 }

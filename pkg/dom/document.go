@@ -31,3 +31,15 @@ func (doc *Document) CreateCanvasElement() (*Canvas, error) {
 		value: jsCanvas,
 	}, nil
 }
+
+func (doc *Document) CreateImageElement(src string) (*Image, error) {
+	jsImg := doc.value.Call("createElement", "img")
+	if jsImg.IsNull() {
+		return nil, errors.String("could not create image element")
+	}
+	jsImg.Set("src", src)
+	img := &Image{
+		value: jsImg,
+	}
+	return img, nil
+}
