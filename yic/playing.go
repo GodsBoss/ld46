@@ -44,7 +44,9 @@ func (p *playing) Tick(ms int) *engine.Transition {
 	p.resources += baseResourcesPerSecondPerPhase[p.phase] * factor
 	for chainIndex := range p.responsibilites {
 		for i := range p.responsibilites[chainIndex] {
-			p.responsibilites[chainIndex][i].position += p.responsibilites[chainIndex][i].speed * factor
+			resp := p.responsibilites[chainIndex][i]
+			resp.position += resp.speed * factor
+			resp.x, resp.y = p.levels.ChosenLevel().responsibilityPosition(chainIndex, resp.position)
 		}
 	}
 	if p.headHealth < 0.0 {
@@ -114,13 +116,12 @@ func (p *playing) Objects() map[string][]engine.Object {
 
 	for chainIndex := range p.responsibilites {
 		for i := range p.responsibilites[chainIndex] {
-			rx, ry := p.levels.ChosenLevel().responsibilityPosition(chainIndex, p.responsibilites[chainIndex][i].position)
 			objects["entities"] = append(
 				objects["entities"],
 				engine.Object{
 					Key: p.responsibilites[chainIndex][i].typ,
-					X:   int(rx),
-					Y:   int(ry),
+					X:   int(p.responsibilites[chainIndex][i].x),
+					Y:   int(p.responsibilites[chainIndex][i].y),
 				},
 			)
 		}
@@ -159,6 +160,10 @@ type responsibility struct {
 
 	// position is the position of the responsibility on its chain.
 	position float64
+
+	// x and y are calculated via position.
+	x float64
+	y float64
 }
 
 const (
