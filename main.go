@@ -9,6 +9,7 @@ import (
 	"github.com/GodsBoss/ld46/pkg/engine"
 	"github.com/GodsBoss/ld46/pkg/engine/domevents"
 	"github.com/GodsBoss/ld46/pkg/errors"
+	"github.com/GodsBoss/ld46/pkg/ui"
 	"github.com/GodsBoss/ld46/yic"
 )
 
@@ -48,50 +49,72 @@ func run() error {
 	errsChan := make(chan error)
 	img.On(
 		func() {
+			game := yic.NewGame()
+			dom.AddEventListener(
+				w,
+				"keydown",
+				func(event js.Value) {
+					game.ReceiveKeyEvent(domevents.FromKeyEvent(engine.KeyDown, event))
+				},
+			)
+			dom.AddEventListener(
+				w,
+				"keyup",
+				func(event js.Value) {
+					game.ReceiveKeyEvent(domevents.FromKeyEvent(engine.KeyUp, event))
+				},
+			)
+			dom.AddEventListener(
+				canvas,
+				"mousedown",
+				func(event js.Value) {
+					game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseDown, event))
+				},
+			)
+			dom.AddEventListener(
+				canvas,
+				"mouseup",
+				func(event js.Value) {
+					game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseUp, event))
+				},
+			)
+			dom.AddEventListener(
+				canvas,
+				"mousemove",
+				func(event js.Value) {
+					game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseMove, event))
+				},
+			)
+
+			cancelGameLoop := make(chan struct{})
 			// Run in background, else Browser main thread (for that window) will become unresponsive.
 			go func() {
-				game := yic.NewGame()
-				dom.AddEventListener(
-					w,
-					"keydown",
-					func(event js.Value) {
-						game.ReceiveKeyEvent(domevents.FromKeyEvent(engine.KeyDown, event))
-					},
-				)
-				dom.AddEventListener(
-					w,
-					"keyup",
-					func(event js.Value) {
-						game.ReceiveKeyEvent(domevents.FromKeyEvent(engine.KeyUp, event))
-					},
-				)
-				dom.AddEventListener(
-					canvas,
-					"mousedown",
-					func(event js.Value) {
-						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseDown, event))
-					},
-				)
-				dom.AddEventListener(
-					canvas,
-					"mouseup",
-					func(event js.Value) {
-						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseUp, event))
-					},
-				)
-				dom.AddEventListener(
-					canvas,
-					"mousemove",
-					func(event js.Value) {
-						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseMove, event))
-					},
-				)
 				ticker := time.NewTicker(time.Millisecond * msPerTick)
 				for {
-					<-ticker.C
+					select {
+					case <-ticker.C:
+					case <-cancelGameLoop:
+						return
+					}
 					game.Tick(msPerTick)
 				}
 			}()
+
+			// Drawing gets its own loop via requestAnimationFrame.
+			context2D, err := canvas.Context2D()
+			if err != nil {
+				close(cancelGameLoop)
+				errsChan <- err
+				close(errsChan)
+			}
+			renderer := ui.NewRenderer(img, yic.Sprites(), []string{"background"})
+			renderer.Zoom = 2
+			var reqAnimationFrameCallback func()
+			reqAnimationFrameCallback = func() {
+				w.RequestAnimationFrame(reqAnimationFrameCallback)
+				renderer.Draw(context2D, game.Objects())
+			}
+			w.RequestAnimationFrame(reqAnimationFrameCallback)
 		},
 		func(err interface{}) {
 			errsChan <- errors.String("loading game gfx failed")
