@@ -47,3 +47,7 @@ type Context2D struct {
 func (ctx2D *Context2D) DisableImageSmoothing() {
 	ctx2D.value.Set("imageSmoothingEnabled", false)
 }
+
+func (ctx2D *Context2D) DrawImage(image *Image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight int) {
+	ctx2D.value.Call("drawImage", image.value, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+}
