@@ -9,6 +9,7 @@ func NewGame() *engine.Game {
 		States: map[string]engine.State{
 			titleStateID:   &title{},
 			playingStateID: &playing{},
+			hiscoreStateID: &hiscore{},
 		},
 	}
 	game.Transition(titleStateID)
