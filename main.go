@@ -107,7 +107,7 @@ func run() error {
 				errsChan <- err
 				close(errsChan)
 			}
-			renderer := ui.NewRenderer(img, yic.Sprites(), []string{"background", "fields", "entities", "ui"})
+			renderer := ui.NewRenderer(img, yic.Sprites(), []string{"background", "fields", "entities", "fx", "ui"})
 			renderer.Zoom = 2
 			var reqAnimationFrameCallback func()
 			reqAnimationFrameCallback = func() {
