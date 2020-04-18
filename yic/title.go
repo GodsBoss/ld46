@@ -15,6 +15,9 @@ func (t *title) Tick(ms int) *engine.Transition {
 }
 
 func (t *title) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
+	if event.Type != engine.KeyUp {
+		return nil
+	}
 	switch event.Key {
 	case "f":
 		return engine.NewTransition(hiscoreStateID)
