@@ -119,8 +119,8 @@ func (p *playing) Objects() map[string][]engine.Object {
 				objects["entities"],
 				engine.Object{
 					Key: p.responsibilites[chainIndex][i].typ,
-					X:   rx,
-					Y:   ry,
+					X:   int(rx),
+					Y:   int(ry),
 				},
 			)
 		}

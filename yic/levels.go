@@ -31,13 +31,13 @@ func (lvl *level) realCoordinate(col, row int) (int, int) {
 	return x, y
 }
 
-func (lvl level) realCoordinateFloat64(gridX, gridY float64) (int, int) {
+func (lvl level) realCoordinateFloat64(gridX, gridY float64) (float64, float64) {
 	x := gridX*float64(fieldSize.X) + float64(200-lvl.width*fieldSize.X/2)
 	y := gridY*float64(fieldSize.Y) + float64(150-lvl.height*fieldSize.Y/2)
-	return int(x), int(y)
+	return x, y
 }
 
-func (lvl level) responsibilityPosition(chainIndex int, pos float64) (int, int) {
+func (lvl level) responsibilityPosition(chainIndex int, pos float64) (float64, float64) {
 	fx, fy := lvl.chains[chainIndex].responsibilityPosition(pos)
 	return lvl.realCoordinateFloat64(fx, fy)
 }
