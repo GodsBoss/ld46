@@ -1,7 +1,6 @@
 package yic
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/GodsBoss/ld46/pkg/engine"
@@ -37,7 +36,6 @@ func (p *playing) Init() {
 			position: -5.0,
 		},
 	)
-	fmt.Println(p.levels.ChosenLevel().responsibilityPosition(0, 0))
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
