@@ -17,3 +17,15 @@ func (t *title) Tick(ms int) *engine.Transition {
 func (t *title) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 	return engine.NewTransition(playingStateID)
 }
+
+func (t *title) Objects() map[string][]engine.Object {
+	return map[string][]engine.Object{
+		"background": []engine.Object{
+			engine.Object{
+				Key: "bg_title",
+				X:   0,
+				Y:   0,
+			},
+		},
+	}
+}

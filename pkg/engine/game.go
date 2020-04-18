@@ -35,6 +35,14 @@ func (game *Game) ReceiveMouseEvent(event MouseEvent) {
 	}
 }
 
+func (game *Game) Objects() map[string][]Object {
+	curState := game.currentState()
+	if curState != nil {
+		return curState.Objects()
+	}
+	return map[string][]Object{}
+}
+
 type Transition struct {
 	NextStateKey string
 }
@@ -57,4 +65,19 @@ type State interface {
 
 	// Tick invokes a game tick, given a duration in milliseconds.
 	Tick(ms int) *Transition
+
+	Objects() map[string][]Object
+}
+
+type Object struct {
+	Key string
+
+	X int
+	Y int
+
+	Z int
+
+	// Animation is the progress of animation. 0 is the start, 1 is the end. Still
+	// works if above or below this interval.
+	Animation float64
 }
