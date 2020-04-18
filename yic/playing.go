@@ -7,19 +7,13 @@ import (
 const playingStateID = "playing"
 
 type playing struct {
-	levels        *levels
-	remainingTime int
+	levels *levels
 }
 
 func (p *playing) Init() {
-	p.remainingTime = 2000
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
-	p.remainingTime -= ms
-	if p.remainingTime <= 0 {
-		return engine.NewTransition(titleStateID)
-	}
 	return nil
 }
 
