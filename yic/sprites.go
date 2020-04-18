@@ -83,21 +83,21 @@ func Sprites() map[string]ui.Sprite {
 			H:      300,
 			Frames: 1,
 		},
-		"responsibility_1": ui.Sprite{
+		responsibilityType1: ui.Sprite{
 			X:      0,
 			Y:      60,
 			W:      16,
 			H:      16,
 			Frames: 4,
 		},
-		"responsibility_2": ui.Sprite{
+		responsibilityType2: ui.Sprite{
 			X:      0,
 			Y:      76,
 			W:      16,
 			H:      16,
 			Frames: 4,
 		},
-		"responsibility_3": ui.Sprite{
+		responsibilityType3: ui.Sprite{
 			X:      0,
 			Y:      92,
 			W:      16,

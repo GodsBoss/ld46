@@ -31,6 +31,17 @@ func (lvl *level) realCoordinate(col, row int) (int, int) {
 	return x, y
 }
 
+func (lvl level) realCoordinateFloat64(gridX, gridY float64) (int, int) {
+	x := gridX*float64(fieldSize.X) + float64(200-lvl.width*fieldSize.X/2)
+	y := gridY*float64(fieldSize.Y) + float64(150-lvl.height*fieldSize.Y/2)
+	return int(x), int(y)
+}
+
+func (lvl level) responsibilityPosition(chainIndex int, pos float64) (int, int) {
+	fx, fy := lvl.chains[chainIndex].responsibilityPosition(pos)
+	return lvl.realCoordinateFloat64(fx, fy)
+}
+
 type field struct {
 	typ int
 }
@@ -247,6 +258,18 @@ func (ch chain) length() int {
 	return l
 }
 
+func (ch chain) responsibilityPosition(pos float64) (float64, float64) {
+	length := 0
+	for i := range ch.segments {
+		if float64(length+ch.segments[i].length()) > pos {
+			return ch.segments[i].responsibilityPosition(pos - float64(length))
+		}
+		length = length + ch.segments[i].length()
+	}
+	lastSegment := ch.segments[len(ch.segments)-1]
+	return lastSegment.responsibilityPosition(pos - float64(length) + float64(lastSegment.length()))
+}
+
 type segment struct {
 	start *waypoint
 	end   *waypoint
@@ -254,6 +277,20 @@ type segment struct {
 
 func (s segment) length() int {
 	return addVector2Ds(s.end.position, s.start.position.scale(-1)).abs().sum()
+}
+
+// responsibilityPosition calculates the grid position of a responsibility in
+// this segment. pos is already translated to the segment.
+func (s segment) responsibilityPosition(pos float64) (float64, float64) {
+	if pos < 0.0 {
+		pos = 0.0
+	}
+	if pos > float64(s.length()) {
+		pos = float64(s.length())
+	}
+	x := float64(s.start.position.X) + float64(s.start.direction.X)*pos
+	y := float64(s.start.position.Y) + float64(s.start.direction.Y)*pos
+	return x, y
 }
 
 var levelOne = `

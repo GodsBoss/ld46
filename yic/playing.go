@@ -1,6 +1,7 @@
 package yic
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/GodsBoss/ld46/pkg/engine"
@@ -11,14 +12,35 @@ const playingStateID = "playing"
 type playing struct {
 	levels *levels
 
-	headAnimation float64
+	headAnimation   float64
+	responsibilites map[int][]*responsibility
 }
 
 func (p *playing) Init() {
+	p.headAnimation = 0.0
+	p.responsibilites = make(map[int][]*responsibility)
+	for chainIndex := range p.levels.ChosenLevel().chains {
+		p.responsibilites[chainIndex] = make([]*responsibility, 0)
+	}
+	p.responsibilites[0] = append(
+		p.responsibilites[0],
+		&responsibility{
+			typ:      responsibilityType1,
+			speed:    2.5,
+			position: -5.0,
+		},
+	)
+	fmt.Println(p.levels.ChosenLevel().responsibilityPosition(0, 0))
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
-	p.headAnimation = math.Mod(p.headAnimation+float64(ms)/1000.0, 1.0)
+	factor := float64(ms) / 1000.0
+	p.headAnimation = math.Mod(p.headAnimation+factor, 1.0)
+	for chainIndex := range p.responsibilites {
+		for i := range p.responsibilites[chainIndex] {
+			p.responsibilites[chainIndex][i].position += p.responsibilites[chainIndex][i].speed * factor
+		}
+	}
 	return nil
 }
 
@@ -62,6 +84,21 @@ func (p *playing) Objects() map[string][]engine.Object {
 			)
 		}
 	}
+
+	for chainIndex := range p.responsibilites {
+		for i := range p.responsibilites[chainIndex] {
+			rx, ry := p.levels.ChosenLevel().responsibilityPosition(chainIndex, p.responsibilites[chainIndex][i].position)
+			objects["entities"] = append(
+				objects["entities"],
+				engine.Object{
+					Key: p.responsibilites[chainIndex][i].typ,
+					X:   rx,
+					Y:   ry,
+				},
+			)
+		}
+	}
+
 	return objects
 }
 
@@ -75,3 +112,18 @@ var fieldSize = vector2D{
 	X: 18,
 	Y: 18,
 }
+
+type responsibility struct {
+	typ   string
+	life  float64
+	speed float64
+
+	// position is the position of the responsibility on its chain.
+	position float64
+}
+
+const (
+	responsibilityType1 = "responsibility_1"
+	responsibilityType2 = "responsibility_2"
+	responsibilityType3 = "responsibility_3"
+)
