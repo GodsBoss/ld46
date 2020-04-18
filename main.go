@@ -1,10 +1,13 @@
 package main
 
 import (
+	"syscall/js"
 	"time"
 
 	"github.com/GodsBoss/ld46/pkg/console"
 	"github.com/GodsBoss/ld46/pkg/dom"
+	"github.com/GodsBoss/ld46/pkg/engine"
+	"github.com/GodsBoss/ld46/pkg/engine/domevents"
 	"github.com/GodsBoss/ld46/pkg/errors"
 	"github.com/GodsBoss/ld46/yic"
 )
@@ -48,6 +51,41 @@ func run() error {
 			// Run in background, else Browser main thread (for that window) will become unresponsive.
 			go func() {
 				game := yic.NewGame()
+				dom.AddEventListener(
+					w,
+					"keydown",
+					func(event js.Value) {
+						game.ReceiveKeyEvent(domevents.FromKeyEvent(engine.KeyDown, event))
+					},
+				)
+				dom.AddEventListener(
+					w,
+					"keyup",
+					func(event js.Value) {
+						game.ReceiveKeyEvent(domevents.FromKeyEvent(engine.KeyUp, event))
+					},
+				)
+				dom.AddEventListener(
+					canvas,
+					"mousedown",
+					func(event js.Value) {
+						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseDown, event))
+					},
+				)
+				dom.AddEventListener(
+					canvas,
+					"mouseup",
+					func(event js.Value) {
+						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseUp, event))
+					},
+				)
+				dom.AddEventListener(
+					canvas,
+					"mousemove",
+					func(event js.Value) {
+						game.ReceiveMouseEvent(domevents.FromMouseEvent(engine.MouseMove, event))
+					},
+				)
 				ticker := time.NewTicker(time.Millisecond * 40)
 				for {
 					<-ticker.C
