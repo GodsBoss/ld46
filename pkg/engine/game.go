@@ -23,6 +23,18 @@ func (game *Game) currentState() State {
 	return game.States[game.currentStateID]
 }
 
+func (game *Game) ReceiveKeyEvent(event KeyEvent) {
+	if target, ok := game.currentState().(KeyEventTarget); ok {
+		target.HandleKeyEvent(event).invoke(game)
+	}
+}
+
+func (game *Game) ReceiveMouseEvent(event MouseEvent) {
+	if target, ok := game.currentState().(MouseEventTarget); ok {
+		target.HandleMouseEvent(event).invoke(game)
+	}
+}
+
 type Transition struct {
 	NextStateKey string
 }
