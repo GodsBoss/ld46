@@ -1,9 +1,12 @@
 package main
 
 import (
+	"time"
+
 	"github.com/GodsBoss/ld46/pkg/console"
 	"github.com/GodsBoss/ld46/pkg/dom"
 	"github.com/GodsBoss/ld46/pkg/errors"
+	"github.com/GodsBoss/ld46/yic"
 )
 
 func main() {
@@ -42,7 +45,15 @@ func run() error {
 	errsChan := make(chan error)
 	img.On(
 		func() {
-			// TODO: Start game!
+			// Run in background, else Browser main thread (for that window) will become unresponsive.
+			go func() {
+				game := yic.NewGame()
+				ticker := time.NewTicker(time.Millisecond * 40)
+				for {
+					<-ticker.C
+					game.Tick(40)
+				}
+			}()
 		},
 		func(err interface{}) {
 			errsChan <- errors.String("loading game gfx failed")
