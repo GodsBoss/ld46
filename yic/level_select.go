@@ -32,5 +32,13 @@ func (ls *levelSelect) HandleKeyEvent(event engine.KeyEvent) *engine.Transition 
 }
 
 func (ls *levelSelect) Objects() map[string][]engine.Object {
-	return map[string][]engine.Object{}
+	return map[string][]engine.Object{
+		"background": []engine.Object{
+			engine.Object{
+				Key: "bg_level_select",
+				X:   0,
+				Y:   0,
+			},
+		},
+	}
 }

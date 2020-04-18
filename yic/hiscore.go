@@ -22,5 +22,13 @@ func (h *hiscore) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 }
 
 func (h *hiscore) Objects() map[string][]engine.Object {
-	return map[string][]engine.Object{}
+	return map[string][]engine.Object{
+		"background": []engine.Object{
+			engine.Object{
+				Key: "bg_hiscore",
+				X:   0,
+				Y:   0,
+			},
+		},
+	}
 }

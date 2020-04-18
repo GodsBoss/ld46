@@ -15,5 +15,13 @@ func (g *gameOver) Tick(ms int) *engine.Transition {
 }
 
 func (g *gameOver) Objects() map[string][]engine.Object {
-	return map[string][]engine.Object{}
+	return map[string][]engine.Object{
+		"background": []engine.Object{
+			engine.Object{
+				Key: "bg_game_over",
+				X:   0,
+				Y:   0,
+			},
+		},
+	}
 }
