@@ -10,4 +10,6 @@ type title struct{}
 
 func (t *title) Init() {}
 
-func (t *title) Tick(transitioner engine.Transitioner, ms int) {}
+func (t *title) Tick(ms int) *engine.Transition {
+	return nil
+}

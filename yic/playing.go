@@ -14,9 +14,10 @@ func (p *playing) Init() {
 	p.remainingTime = 2000
 }
 
-func (p *playing) Tick(transitioner engine.Transitioner, ms int) {
+func (p *playing) Tick(ms int) *engine.Transition {
 	p.remainingTime -= ms
 	if p.remainingTime <= 0 {
-		transitioner.Transition(titleStateID)
+		return engine.NewTransition(titleStateID)
 	}
+	return nil
 }

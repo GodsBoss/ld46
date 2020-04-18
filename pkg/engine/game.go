@@ -7,7 +7,7 @@ type Game struct {
 }
 
 func (game *Game) Tick(ms int) {
-	game.currentState().Tick(game, ms)
+	game.currentState().Tick(ms).invoke(game)
 }
 
 func (game *Game) Transition(nextStateKey string) {
@@ -23,8 +23,20 @@ func (game *Game) currentState() State {
 	return game.States[game.currentStateID]
 }
 
-type Transitioner interface {
-	Transition(nextStateKey string)
+type Transition struct {
+	NextStateKey string
+}
+
+func NewTransition(nextStateKey string) *Transition {
+	return &Transition{
+		NextStateKey: nextStateKey,
+	}
+}
+
+func (transition *Transition) invoke(game *Game) {
+	if transition != nil {
+		game.Transition(transition.NextStateKey)
+	}
 }
 
 type State interface {
@@ -32,5 +44,5 @@ type State interface {
 	Init()
 
 	// Tick invokes a game tick, given a duration in milliseconds.
-	Tick(transitioner Transitioner, ms int)
+	Tick(ms int) *Transition
 }
