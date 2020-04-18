@@ -3,6 +3,8 @@
 package dom
 
 import (
+	"github.com/GodsBoss/ld46/pkg/errors"
+
 	"syscall/js"
 )
 
@@ -26,4 +28,22 @@ func (canvas *Canvas) SetWidth(width int) {
 
 func (canvas *Canvas) SetHeight(height int) {
 	canvas.value.Set("height", height)
+}
+
+func (canvas *Canvas) Context2D() (*Context2D, error) {
+	jsCtx := canvas.value.Call("getContext", "2d")
+	if jsCtx.IsNull() {
+		return nil, errors.String("2d context not supported")
+	}
+	return &Context2D{
+		value: jsCtx,
+	}, nil
+}
+
+type Context2D struct {
+	value js.Value
+}
+
+func (ctx2D *Context2D) DisableImageSmoothing() {
+	ctx2D.value.Set("imageSmoothingEnabled", false)
 }
