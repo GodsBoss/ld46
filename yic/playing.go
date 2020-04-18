@@ -17,6 +17,7 @@ type playing struct {
 	phase           int
 	headHealth      float64
 	resources       float64
+	gridCursor      vector2D
 }
 
 func (p *playing) Init() {
@@ -61,6 +62,13 @@ func (p *playing) Tick(ms int) *engine.Transition {
 func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 	if event.Type == engine.KeyUp && event.Key == "x" {
 		return engine.NewTransition(gameOverStateID)
+	}
+	return nil
+}
+
+func (p *playing) HandleMouseEvent(event engine.MouseEvent) *engine.Transition {
+	if event.Type == engine.MouseMove {
+		p.gridCursor = p.levels.ChosenLevel().gridCursor(event.X, event.Y)
 	}
 	return nil
 }
@@ -118,6 +126,18 @@ func (p *playing) Objects() map[string][]engine.Object {
 				},
 			)
 		}
+	}
+
+	if p.gridCursor.X >= 0 && p.gridCursor.Y >= 0 && p.gridCursor.X < p.levels.ChosenLevel().width && p.gridCursor.Y < p.levels.ChosenLevel().height {
+		cx, cy := lvl.realCoordinate(p.gridCursor.X, p.gridCursor.Y)
+		objects["ui"] = append(
+			objects["ui"],
+			engine.Object{
+				Key: "grid_cursor",
+				X:   cx,
+				Y:   cy,
+			},
+		)
 	}
 
 	return objects

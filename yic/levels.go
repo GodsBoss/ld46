@@ -42,6 +42,13 @@ func (lvl level) responsibilityPosition(chainIndex int, pos float64) (int, int) 
 	return lvl.realCoordinateFloat64(fx, fy)
 }
 
+func (lvl level) gridCursor(mouseX, mouseY int) vector2D {
+	return vector2D{
+		X: (mouseX - 200 + lvl.width*fieldSize.X/2) / fieldSize.X,
+		Y: (mouseY - 150 + lvl.height*fieldSize.Y/2) / fieldSize.Y,
+	}
+}
+
 type field struct {
 	typ int
 }
