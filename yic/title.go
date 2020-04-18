@@ -18,6 +18,8 @@ func (t *title) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 	switch event.Key {
 	case "f":
 		return engine.NewTransition(hiscoreStateID)
+	case "l":
+		return engine.NewTransition(levelSelectStateID)
 	}
 	return nil
 }
