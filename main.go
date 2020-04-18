@@ -9,7 +9,7 @@ import (
 func main() {
 	err := run()
 	if err != nil {
-		console.Global().LogObjects(err)
+		console.Global().LogMessage(err.Error())
 	}
 }
 
