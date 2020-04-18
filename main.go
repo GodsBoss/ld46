@@ -108,7 +108,7 @@ func run() error {
 				close(errsChan)
 			}
 			renderer := ui.NewRenderer(img, yic.Sprites(), []string{"background", "fields", "entities", "fx", "ui"})
-			renderer.Zoom = 2
+			renderer.Zoom = zoom
 			var reqAnimationFrameCallback func()
 			reqAnimationFrameCallback = func() {
 				w.RequestAnimationFrame(reqAnimationFrameCallback)
@@ -125,3 +125,5 @@ func run() error {
 }
 
 const msPerTick = 40
+
+const zoom = 2
