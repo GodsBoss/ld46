@@ -15,7 +15,11 @@ func (t *title) Tick(ms int) *engine.Transition {
 }
 
 func (t *title) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
-	return engine.NewTransition(playingStateID)
+	switch event.Key {
+	case "f":
+		return engine.NewTransition(hiscoreStateID)
+	}
+	return nil
 }
 
 func (t *title) Objects() map[string][]engine.Object {
