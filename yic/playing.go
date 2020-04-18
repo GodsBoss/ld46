@@ -16,12 +16,16 @@ type playing struct {
 	phase           int
 	headHealth      float64
 	resources       float64
+	incomePerSecond float64
 	gridCursor      vector2D
+	buildings       map[vector2D]building
 }
 
 func (p *playing) Init() {
+	p.buildings = make(map[vector2D]building)
 	p.phase = 1
 	p.resources = startResources
+	p.calculateIncomePerSecond()
 	p.headAnimation = 0.0
 	p.headHealth = healthPerPhase
 	p.responsibilites = make(map[int][]*responsibility)
@@ -42,7 +46,7 @@ func (p *playing) Init() {
 func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.headAnimation = math.Mod(p.headAnimation+factor, 1.0)
-	p.resources += baseResourcesPerSecondPerPhase[p.phase] * factor
+	p.resources += p.incomePerSecond * factor
 	for chainIndex := range p.responsibilites {
 		respsToRemove := make(map[int]struct{})
 		for i := range p.responsibilites[chainIndex] {
@@ -72,14 +76,57 @@ func (p *playing) Tick(ms int) *engine.Transition {
 			return engine.NewTransition(gameOverStateID)
 		}
 		p.phase++
+		p.calculateIncomePerSecond()
 		p.headHealth = healthPerPhase
 	}
 	return nil
 }
 
+func (p *playing) calculateIncomePerSecond() {
+	p.incomePerSecond = baseResourcesPerSecondPerPhase[p.phase]
+	for v := range p.buildings {
+		if provider, ok := p.buildings[v].(incomeProviderBuilding); ok {
+			p.incomePerSecond += provider.IncomePerSecond()
+		}
+	}
+}
+
+type incomeProviderBuilding interface {
+	IncomePerSecond() float64
+}
+
 func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
-	if event.Type == engine.KeyUp && event.Key == "x" {
+	if event.Type != engine.KeyUp {
+		return nil
+	}
+	if event.Key == "x" {
 		return engine.NewTransition(gameOverStateID)
+	}
+	if placeBuilding, ok := keyPlaceBuildingMapping[event.Key]; ok {
+		// Too expensive.
+		if placeBuilding.cost() > p.resources {
+			return nil
+		}
+
+		lvl := p.levels.ChosenLevel()
+
+		// Far from any field.
+		if !lvl.isOnGrid(p.gridCursor.X, p.gridCursor.Y) {
+			return nil
+		}
+		// Field type not matching.
+		if _, ok := placeBuilding.fieldTypes()[lvl.fields[p.gridCursor.Y][p.gridCursor.X].typ]; !ok {
+			return nil
+		}
+		// Field already contains building.
+		if _, ok := p.buildings[p.gridCursor]; ok {
+			return nil
+		}
+
+		// Finally, build building.
+		p.buildings[p.gridCursor] = placeBuilding.building(p.gridCursor)
+		p.resources -= placeBuilding.cost()
+		return nil
 	}
 	return nil
 }
