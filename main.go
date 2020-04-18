@@ -1,15 +1,14 @@
 package main
 
 import (
-	"fmt"
-
+	"github.com/GodsBoss/ld46/pkg/console"
 	"github.com/GodsBoss/ld46/pkg/dom"
 )
 
 func main() {
 	err := run()
 	if err != nil {
-		fmt.Println(err)
+		console.Global().LogObjects(err)
 	}
 }
 
