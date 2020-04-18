@@ -15,7 +15,11 @@ dist:
 clean:
 	rm -rf dist
 
+serve: all
+	SERVE_DIR=$${PWD}/dist go run ./serve
+
 .PHONY: \
 	all \
 	clean \
-	dist/main.wasm
+	dist/main.wasm \
+	serve
