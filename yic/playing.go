@@ -14,10 +14,14 @@ type playing struct {
 
 	headAnimation   float64
 	responsibilites map[int][]*responsibility
+	phase           int
+	headHealth      float64
 }
 
 func (p *playing) Init() {
+	p.phase = 1
 	p.headAnimation = 0.0
+	p.headHealth = healthPerPhase
 	p.responsibilites = make(map[int][]*responsibility)
 	for chainIndex := range p.levels.ChosenLevel().chains {
 		p.responsibilites[chainIndex] = make([]*responsibility, 0)
@@ -41,6 +45,13 @@ func (p *playing) Tick(ms int) *engine.Transition {
 			p.responsibilites[chainIndex][i].position += p.responsibilites[chainIndex][i].speed * factor
 		}
 	}
+	if p.headHealth < 0.0 {
+		if p.phase == 3 {
+			return engine.NewTransition(gameOverStateID)
+		}
+		p.phase++
+		p.headHealth = healthPerPhase
+	}
 	return nil
 }
 
@@ -58,7 +69,7 @@ func (p *playing) Objects() map[string][]engine.Object {
 		"fields": []engine.Object{},
 		"entities": []engine.Object{
 			engine.Object{
-				Key:       "head_toddler",
+				Key:       phaseHeadMapping[p.phase],
 				X:         headX,
 				Y:         headY,
 				Animation: p.headAnimation,
@@ -127,3 +138,11 @@ const (
 	responsibilityType2 = "responsibility_2"
 	responsibilityType3 = "responsibility_3"
 )
+
+var phaseHeadMapping = map[int]string{
+	1: "head_toddler",
+	2: "head_child",
+	3: "head_teen",
+}
+
+const healthPerPhase = 1000.0
