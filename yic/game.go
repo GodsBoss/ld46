@@ -7,7 +7,8 @@ import (
 func NewGame() *engine.Game {
 	game := &engine.Game{
 		States: map[string]engine.State{
-			titleStateID: &title{},
+			titleStateID:   &title{},
+			playingStateID: &playing{},
 		},
 	}
 	game.Transition(titleStateID)
