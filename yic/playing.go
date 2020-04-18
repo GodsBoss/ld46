@@ -7,6 +7,7 @@ import (
 const playingStateID = "playing"
 
 type playing struct {
+	levels        *levels
 	remainingTime int
 }
 
