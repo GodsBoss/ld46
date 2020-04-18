@@ -37,9 +37,10 @@ func (lvl level) realCoordinateFloat64(gridX, gridY float64) (float64, float64) 
 	return x, y
 }
 
-func (lvl level) responsibilityPosition(chainIndex int, pos float64) (float64, float64) {
-	fx, fy := lvl.chains[chainIndex].responsibilityPosition(pos)
-	return lvl.realCoordinateFloat64(fx, fy)
+func (lvl level) responsibilityPosition(chainIndex int, pos float64) (float64, float64, bool) {
+	fx, fy, endReached := lvl.chains[chainIndex].responsibilityPosition(pos)
+	rx, ry := lvl.realCoordinateFloat64(fx, fy)
+	return rx, ry, endReached
 }
 
 func (lvl level) gridCursor(mouseX, mouseY int) vector2D {
@@ -269,16 +270,22 @@ func (ch chain) length() int {
 	return l
 }
 
-func (ch chain) responsibilityPosition(pos float64) (float64, float64) {
+// responsibilityPosition calculates the x/y position from a responsibility,
+// dependent on its current "path" position.
+// The third return value determines wether the last waypoint is reached
+// (this usually means that it reached the head).
+func (ch chain) responsibilityPosition(pos float64) (float64, float64, bool) {
 	length := 0
 	for i := range ch.segments {
 		if float64(length+ch.segments[i].length()) > pos {
-			return ch.segments[i].responsibilityPosition(pos - float64(length))
+			x, y := ch.segments[i].responsibilityPosition(pos - float64(length))
+			return x, y, false
 		}
 		length = length + ch.segments[i].length()
 	}
 	lastSegment := ch.segments[len(ch.segments)-1]
-	return lastSegment.responsibilityPosition(pos - float64(length) + float64(lastSegment.length()))
+	x, y := lastSegment.responsibilityPosition(pos - float64(length) + float64(lastSegment.length()))
+	return x, y, true
 }
 
 type segment struct {

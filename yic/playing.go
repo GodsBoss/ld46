@@ -32,8 +32,9 @@ func (p *playing) Init() {
 		p.responsibilites[0],
 		&responsibility{
 			typ:      responsibilityType1,
-			speed:    2.5,
+			speed:    12.5,
 			position: -5.0,
+			life:     1500,
 		},
 	)
 }
@@ -43,10 +44,27 @@ func (p *playing) Tick(ms int) *engine.Transition {
 	p.headAnimation = math.Mod(p.headAnimation+factor, 1.0)
 	p.resources += baseResourcesPerSecondPerPhase[p.phase] * factor
 	for chainIndex := range p.responsibilites {
+		respsToRemove := make(map[int]struct{})
 		for i := range p.responsibilites[chainIndex] {
+			var headReached bool
 			resp := p.responsibilites[chainIndex][i]
 			resp.position += resp.speed * factor
-			resp.x, resp.y = p.levels.ChosenLevel().responsibilityPosition(chainIndex, resp.position)
+			resp.x, resp.y, headReached = p.levels.ChosenLevel().responsibilityPosition(chainIndex, resp.position)
+			if headReached {
+				respsToRemove[i] = struct{}{}
+			}
+		}
+		if len(respsToRemove) > 0 {
+			remaining := make([]*responsibility, 0, len(p.responsibilites)-len(respsToRemove))
+			for i := range p.responsibilites[chainIndex] {
+				resp := p.responsibilites[chainIndex][i]
+				if _, okRemove := respsToRemove[i]; okRemove {
+					p.headHealth -= resp.life
+				} else {
+					remaining = append(remaining, resp)
+				}
+			}
+			p.responsibilites[chainIndex] = remaining
 		}
 	}
 	if p.headHealth < 0.0 {
