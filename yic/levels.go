@@ -9,6 +9,10 @@ type levels struct {
 	chosen string
 }
 
+func (l *levels) ChosenLevel() level {
+	return l.byKey[l.chosen]
+}
+
 type level struct {
 	width  int
 	height int
@@ -19,6 +23,12 @@ type level struct {
 	fields [][]field
 
 	chains []*chain
+}
+
+func (lvl *level) realCoordinate(col, row int) (int, int) {
+	x := col*fieldSize.X + 200 - lvl.width*fieldSize.X/2
+	y := row*fieldSize.Y + 150 - lvl.height*fieldSize.Y/2
+	return x, y
 }
 
 type field struct {
