@@ -55,3 +55,8 @@ func (ctx2D *Context2D) DrawImage(image *Image, sx, sy, sWidth, sHeight, dx, dy,
 func (ctx2D *Context2D) ClearRect(x, y, width, height int) {
 	ctx2D.value.Call("clearRect", x, y, width, height)
 }
+
+func (ctx2D *Context2D) Size() (w int, h int) {
+	canv := ctx2D.value.Get("canvas")
+	return canv.Get("width").Int(), canv.Get("height").Int()
+}
