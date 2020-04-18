@@ -55,6 +55,13 @@ func (p *playing) Tick(ms int) *engine.Transition {
 	return nil
 }
 
+func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
+	if event.Type == engine.KeyUp && event.Key == "x" {
+		return engine.NewTransition(gameOverStateID)
+	}
+	return nil
+}
+
 func (p *playing) Objects() map[string][]engine.Object {
 	lvl := p.levels.ChosenLevel()
 	headX, headY := lvl.realCoordinate(lvl.headX, lvl.headY)
