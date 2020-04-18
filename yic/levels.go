@@ -49,6 +49,10 @@ func (lvl level) gridCursor(mouseX, mouseY int) vector2D {
 	}
 }
 
+func (lvl level) isOnGrid(x, y int) bool {
+	return x >= 0 && y >= 0 && x < lvl.width && y < lvl.height
+}
+
 type field struct {
 	typ int
 }

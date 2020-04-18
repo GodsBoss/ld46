@@ -128,7 +128,7 @@ func (p *playing) Objects() map[string][]engine.Object {
 		}
 	}
 
-	if p.gridCursor.X >= 0 && p.gridCursor.Y >= 0 && p.gridCursor.X < p.levels.ChosenLevel().width && p.gridCursor.Y < p.levels.ChosenLevel().height {
+	if p.levels.ChosenLevel().isOnGrid(p.gridCursor.X, p.gridCursor.Y) {
 		cx, cy := lvl.realCoordinate(p.gridCursor.X, p.gridCursor.Y)
 		objects["ui"] = append(
 			objects["ui"],
