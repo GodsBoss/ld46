@@ -43,3 +43,15 @@ func (w *Window) Document() (*Document, error) {
 		value: jsDoc,
 	}, nil
 }
+
+func (w *Window) RequestAnimationFrame(f func()) {
+	w.getValue().Call(
+		"requestAnimationFrame",
+		js.FuncOf(
+			func(_ js.Value, _ []js.Value) interface{} {
+				f()
+				return nil
+			},
+		),
+	)
+}
