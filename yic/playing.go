@@ -16,10 +16,12 @@ type playing struct {
 	responsibilites map[int][]*responsibility
 	phase           int
 	headHealth      float64
+	resources       float64
 }
 
 func (p *playing) Init() {
 	p.phase = 1
+	p.resources = startResources
 	p.headAnimation = 0.0
 	p.headHealth = healthPerPhase
 	p.responsibilites = make(map[int][]*responsibility)
@@ -40,6 +42,7 @@ func (p *playing) Init() {
 func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.headAnimation = math.Mod(p.headAnimation+factor, 1.0)
+	p.resources += baseResourcesPerSecond * factor
 	for chainIndex := range p.responsibilites {
 		for i := range p.responsibilites[chainIndex] {
 			p.responsibilites[chainIndex][i].position += p.responsibilites[chainIndex][i].speed * factor
@@ -153,3 +156,6 @@ var phaseHeadMapping = map[int]string{
 }
 
 const healthPerPhase = 1000.0
+
+const startResources = 1000.0
+const baseResourcesPerSecond = 100.0
