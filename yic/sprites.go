@@ -20,5 +20,26 @@ func Sprites() map[string]ui.Sprite {
 			H:      300,
 			Frames: 1,
 		},
+		"bg_level_select": ui.Sprite{
+			X:      400,
+			Y:      600,
+			W:      400,
+			H:      300,
+			Frames: 1,
+		},
+		"bg_game_over": ui.Sprite{
+			X:      400,
+			Y:      900,
+			W:      400,
+			H:      300,
+			Frames: 1,
+		},
+		"bg_hiscore": ui.Sprite{
+			X:      400,
+			Y:      1200,
+			W:      400,
+			H:      300,
+			Frames: 1,
+		},
 	}
 }
