@@ -104,5 +104,12 @@ func Sprites() map[string]ui.Sprite {
 			H:      16,
 			Frames: 4,
 		},
+		"grid_cursor": ui.Sprite{
+			X:      16,
+			Y:      0,
+			W:      16,
+			H:      16,
+			Frames: 1,
+		},
 	}
 }
