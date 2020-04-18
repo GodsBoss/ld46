@@ -43,7 +43,7 @@ func (p *playing) Init() {
 func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.headAnimation = math.Mod(p.headAnimation+factor, 1.0)
-	p.resources += baseResourcesPerSecond * factor
+	p.resources += baseResourcesPerSecondPerPhase[p.phase] * factor
 	for chainIndex := range p.responsibilites {
 		for i := range p.responsibilites[chainIndex] {
 			p.responsibilites[chainIndex][i].position += p.responsibilites[chainIndex][i].speed * factor
@@ -169,13 +169,24 @@ const (
 	responsibilityType3 = "responsibility_3"
 )
 
+const (
+	phaseToddler = 1
+	phaseChild   = 2
+	phaseTeen    = 3
+)
+
 var phaseHeadMapping = map[int]string{
-	1: "head_toddler",
-	2: "head_child",
-	3: "head_teen",
+	phaseToddler: "head_toddler",
+	phaseChild:   "head_child",
+	phaseTeen:    "head_teen",
 }
 
 const healthPerPhase = 1000.0
 
 const startResources = 1000.0
-const baseResourcesPerSecond = 100.0
+
+var baseResourcesPerSecondPerPhase = map[int]float64{
+	phaseToddler: 100.0,
+	phaseChild:   75.0,
+	phaseTeen:    60.0,
+}
