@@ -30,6 +30,10 @@ func (w *Window) getValue() js.Value {
 	return js.Global()
 }
 
+func (w *Window) getJSNode() js.Value {
+	return w.value
+}
+
 func (w *Window) Document() (*Document, error) {
 	jsDoc := w.getValue().Get("document")
 	if jsDoc.IsNull() {
