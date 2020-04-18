@@ -51,3 +51,7 @@ func (ctx2D *Context2D) DisableImageSmoothing() {
 func (ctx2D *Context2D) DrawImage(image *Image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight int) {
 	ctx2D.value.Call("drawImage", image.value, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
 }
+
+func (ctx2D *Context2D) ClearRect(x, y, width, height int) {
+	ctx2D.value.Call("clearRect", x, y, width, height)
+}
