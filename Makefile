@@ -1,4 +1,4 @@
-all: dist/main.wasm dist/wasm_exec.js dist/index.html
+all: dist/main.wasm dist/wasm_exec.js dist/index.html dist/gfx.png
 
 dist/main.wasm: Makefile
 	GOOS=js GOARCH=wasm go build -o $@
@@ -8,6 +8,9 @@ dist/wasm_exec.js: $(GOROOT)/misc/wasm/wasm_exec.js dist
 
 dist/index.html: static/index.html
 	cp $< $@
+
+dist/gfx.png: gfx/gfx.xcf Makefile gfx/gfx.sh
+	gfx/gfx.sh $< $@
 
 dist:
 	mkdir -p dist
