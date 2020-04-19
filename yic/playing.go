@@ -40,8 +40,7 @@ func (p *playing) Init() {
 	}
 	p.responsibilites.Init()
 	p.textManager.New("resources", 5, 5).SetContent("Resources: " + strconv.Itoa(int(p.resources)))
-	p.textManager.New("build_info_1", 5, 270).SetContent("Hover your mouse over a free building spot,")
-	p.textManager.New("build_info_2", 5, 276).SetContent("then use keyboard to build:")
+	p.textManager.New("build_info", 5, 270).SetContent("Hover your mouse over a free building spot,\nthen use keyboard to build:")
 	p.textManager.New("brain", 5, 288).SetContent("[1]: Brain (passive income) - Cost: " + strconv.Itoa(int(keyPlaceBuildingMapping["1"].cost())))
 	p.textManager.New("neuron", 5, 294).SetContent("[2]: Neuron (weapon)        - Cost: " + strconv.Itoa(int(keyPlaceBuildingMapping["2"].cost())))
 }
