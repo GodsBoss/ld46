@@ -14,6 +14,13 @@ func (g *gameOver) Tick(ms int) *engine.Transition {
 	return nil
 }
 
+func (g *gameOver) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
+	if event.Type == engine.KeyUp && event.Key == "t" {
+		return engine.NewTransition(titleStateID)
+	}
+	return nil
+}
+
 func (g *gameOver) Objects() map[string][]engine.Object {
 	return map[string][]engine.Object{
 		"background": []engine.Object{
