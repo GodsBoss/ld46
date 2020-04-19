@@ -12,7 +12,9 @@ type title struct {
 
 func (t *title) Init() {
 	t.textManager = newTextManager()
-	t.textManager.New("level_select_hint", 20, 100).SetContent("Press L for level selection")
+	t.textManager.New("level_select_hint", 10, 284).SetContent("Press L for level selection")
+	t.textManager.New("title_1", 20, 20).SetScale(2).SetContent("Your Inner Child")
+	t.textManager.New("title_2", 40, 40).SetScale(2).SetContent("Keep It Alive!")
 }
 
 func (t *title) Tick(ms int) *engine.Transition {
