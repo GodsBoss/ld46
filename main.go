@@ -47,6 +47,10 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	waitHint, err := doc.GetElementByID("hint")
+	if err == nil {
+		dom.RemoveNode(waitHint)
+	}
 	errsChan := make(chan error)
 	img.On(
 		func() {

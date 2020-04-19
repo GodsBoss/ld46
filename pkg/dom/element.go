@@ -15,6 +15,14 @@ func (element *Element) AppendChild(node Node) error {
 	return nil
 }
 
+func (element *Element) getJSNode() js.Value {
+	return element.value
+}
+
 type Node interface {
 	getJSNode() js.Value
+}
+
+func RemoveNode(node Node) {
+	node.getJSNode().Get("parentNode").Call("removeChild", node.getJSNode())
 }
