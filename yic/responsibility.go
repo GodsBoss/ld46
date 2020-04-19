@@ -35,6 +35,12 @@ func (resps *responsibilities) Init() {
 func (resps *responsibilities) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 
+	for chainIndex := range resps.byChain {
+		for i := range resps.byChain[chainIndex] {
+			resps.byChain[chainIndex][i].animation += factor
+		}
+	}
+
 	// Check for resps without health and remove them.
 	for chainIndex := range resps.byChain {
 		respsWithoutHealth := make(map[int]struct{})
@@ -115,9 +121,10 @@ func (resps *responsibilities) Objects() []engine.Object {
 			objects = append(
 				objects,
 				engine.Object{
-					Key: resps.byChain[chainIndex][i].typ,
-					X:   int(resps.byChain[chainIndex][i].x),
-					Y:   int(resps.byChain[chainIndex][i].y),
+					Key:       resps.byChain[chainIndex][i].typ,
+					X:         int(resps.byChain[chainIndex][i].x),
+					Y:         int(resps.byChain[chainIndex][i].y),
+					Animation: resps.byChain[chainIndex][i].animation,
 				},
 			)
 		}
@@ -139,6 +146,8 @@ type responsibility struct {
 
 	// reward is added to the player's resources when this responsibility is killed.
 	reward float64
+
+	animation float64
 }
 
 func (r *responsibility) receiveDamage(dmg float64) {
