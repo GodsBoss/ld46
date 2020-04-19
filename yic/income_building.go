@@ -8,6 +8,10 @@ func (b *incomeBuilding) gridXY() vector2D {
 	return b.pos
 }
 
+func (b *incomeBuilding) typ() string {
+	return "building_income"
+}
+
 func (b *incomeBuilding) IncomePerSecond() float64 {
 	return 15.0
 }

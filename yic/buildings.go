@@ -2,6 +2,7 @@ package yic
 
 type building interface {
 	gridXY() vector2D
+	typ() string
 }
 
 type placeBuilding interface {

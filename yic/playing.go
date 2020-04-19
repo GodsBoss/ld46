@@ -179,6 +179,18 @@ func (p *playing) Objects() map[string][]engine.Object {
 		}
 	}
 
+	for v := range p.buildings {
+		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(v.X), float64(v.Y))
+		objects["entities"] = append(
+			objects["entities"],
+			engine.Object{
+				Key: p.buildings[v].typ(),
+				X:   int(x),
+				Y:   int(y),
+			},
+		)
+	}
+
 	for chainIndex := range p.responsibilites {
 		for i := range p.responsibilites[chainIndex] {
 			objects["entities"] = append(
