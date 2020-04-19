@@ -43,12 +43,14 @@ func (p *playing) Init() {
 	p.textManager.New("build_info", 5, 270).SetContent("Hover your mouse over a free building spot,\nthen use keyboard to build:")
 	p.textManager.New("brain", 5, 288).SetContent("[1]: Brain (passive income) - Cost: " + strconv.Itoa(int(keyPlaceBuildingMapping["1"].cost())))
 	p.textManager.New("neuron", 5, 294).SetContent("[2]: Neuron (weapon)        - Cost: " + strconv.Itoa(int(keyPlaceBuildingMapping["2"].cost())))
+	p.textManager.New("points", 5, 17).SetContent("Points: 0")
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.resources += p.incomePerSecond * factor
 	p.responsibilites.Tick(ms)
+	p.textManager.Get("points").SetContent("Points: " + strconv.Itoa(p.responsibilites.enemiesKilled*pointsPerEnemy))
 	for v := range p.buildings {
 		p.buildings[v].Tick(ms)
 	}
@@ -211,3 +213,5 @@ var fieldSize = vector2D{
 }
 
 const startResources = 1000.0
+
+const pointsPerEnemy = 100
