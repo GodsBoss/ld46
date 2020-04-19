@@ -59,11 +59,11 @@ func (h *hiscore) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 		return engine.NewTransition(titleStateID)
 	}
 	if event.Key == "c" {
-		h.lists.Clear()
+		// h.lists.Clear()
 		return engine.NewTransition(hiscoreStateID)
 	}
 	if event.Key == "r" {
-		h.lists.Reset()
+		// h.lists.Reset()
 		return engine.NewTransition(hiscoreStateID)
 	}
 	return nil
