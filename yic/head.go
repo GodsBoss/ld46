@@ -67,7 +67,7 @@ var healthPerPhase = map[int]float64{
 }
 
 var baseResourcesPerSecondPerPhase = map[int]float64{
-	phaseToddler: 100.0,
-	phaseChild:   75.0,
-	phaseTeen:    60.0,
+	phaseToddler: 50.0,
+	phaseChild:   40.0,
+	phaseTeen:    30.0,
 }

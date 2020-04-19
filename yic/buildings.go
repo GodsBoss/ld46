@@ -48,7 +48,7 @@ var _ placeBuilding = &simplePlaceBuilding{}
 
 var keyPlaceBuildingMapping = map[string]placeBuilding{
 	"1": &simplePlaceBuilding{
-		cst: 600.0,
+		cst: 500.0,
 		fldTypes: map[int]struct{}{
 			fieldBuildSpot: struct{}{},
 		},
@@ -61,7 +61,7 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 		},
 	},
 	"2": &simplePlaceBuilding{
-		cst: 750.0,
+		cst: 1000.0,
 		fldTypes: map[int]struct{}{
 			fieldBuildSpot: struct{}{},
 		},

@@ -222,6 +222,6 @@ var fieldSize = vector2D{
 	Y: 18,
 }
 
-const startResources = 1000.0
+const startResources = 2000.0
 
 const pointsPerEnemy = 100
