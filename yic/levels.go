@@ -72,6 +72,7 @@ func createLevels() *levels {
 			"2": parseLevel(levelTwo),
 			"3": parseLevel(levelThree),
 			"4": parseLevel(levelFour),
+			"5": parseLevel(levelFive),
 		},
 	}
 }

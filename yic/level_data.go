@@ -49,3 +49,12 @@ XXXXXOOXXXXX
 XXX..XX.....
 .....XX..X^X
 `
+
+var levelFive = `
+>....v
+..X.X.
+v..<.
+.XX.X.
+OOX...
+OOX^.<
+`
