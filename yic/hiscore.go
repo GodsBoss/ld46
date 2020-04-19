@@ -27,18 +27,23 @@ func (h *hiscore) Init() {
 	}
 	sort.Strings(levelKeys)
 	line := 0
+	offset := 0
 	for i := range levelKeys {
-		h.textManager.New("level_"+levelKeys[i], 15, 25+line*6).SetContent("Level " + levelKeys[i])
+		h.textManager.New("level_"+levelKeys[i], 15+offset, 25+line*6).SetContent("Level " + levelKeys[i])
 		line++
 		for j := range h.lists.hiscoresByLevel[levelKeys[i]] {
 			tmIDPrefix := "level_" + levelKeys[i] + "_" + strconv.Itoa(j) + "_"
-			h.textManager.New(tmIDPrefix+"name", 15, 25+line*6).SetContent(h.lists.hiscoresByLevel[levelKeys[i]][j].Name)
-			h.textManager.New(tmIDPrefix+"points", 60, 25+line*6).SetContent(
+			h.textManager.New(tmIDPrefix+"name", 15+offset, 25+line*6).SetContent(h.lists.hiscoresByLevel[levelKeys[i]][j].Name)
+			h.textManager.New(tmIDPrefix+"points", 60+offset, 25+line*6).SetContent(
 				leftPad(strconv.Itoa(h.lists.hiscoresByLevel[levelKeys[i]][j].Points), 10),
 			)
 			line++
 		}
 		line++
+		if offset == 0 && line > maxLines {
+			line = 0
+			offset = 150
+		}
 	}
 }
 
@@ -209,3 +214,5 @@ func leftPad(input string, length int) string {
 	}
 	return input
 }
+
+const maxLines = 25
