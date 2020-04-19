@@ -1,7 +1,6 @@
 package yic
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/GodsBoss/ld46/pkg/engine"
@@ -90,7 +89,6 @@ func (p *playing) calculateIncomePerSecond() {
 			p.incomePerSecond += provider.IncomePerSecond()
 		}
 	}
-	fmt.Printf("income is now %f\n", p.incomePerSecond)
 }
 
 type incomeProviderBuilding interface {
