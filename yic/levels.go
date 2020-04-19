@@ -71,6 +71,7 @@ func createLevels() *levels {
 			"1": parseLevel(levelOne),
 			"2": parseLevel(levelTwo),
 			"3": parseLevel(levelThree),
+			"4": parseLevel(levelFour),
 		},
 	}
 }
@@ -346,4 +347,19 @@ X.....XX.....X
 XXX.XXXX.XXX.X
 XXX.XXXX.....X
 >XXXXXX^XXXXXX
+`
+
+var levelFour = `
+XvX..XX.....
+.....XX..XXX
+...v.XX...<.
+.....XX.....
+......v.<...
+XXXXXOOXXXXX
+XXXXXOOXXXXX
+...>..^.....
+.....XX.....
+.>...XX.^...
+XXX..XX.....
+.....XX..X^X
 `
