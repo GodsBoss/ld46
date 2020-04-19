@@ -132,5 +132,19 @@ func Sprites() map[string]ui.Sprite {
 			H:      18,
 			Frames: 2,
 		},
+		gunShot: ui.Sprite{
+			X:      108,
+			Y:      108,
+			W:      8,
+			H:      8,
+			Frames: 8,
+		},
+		gunHit: ui.Sprite{
+			X:      108,
+			Y:      116,
+			W:      8,
+			H:      8,
+			Frames: 8,
+		},
 	}
 }
