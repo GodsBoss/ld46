@@ -86,6 +86,7 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 		return nil
 	}
 	if event.Key == "x" {
+		p.hiscoreLists.Add(p.levels.chosen, "you", p.points())
 		return engine.NewTransition(gameOverStateID)
 	}
 	if placeBuilding, ok := keyPlaceBuildingMapping[event.Key]; ok {
