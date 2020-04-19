@@ -37,6 +37,9 @@ func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.resources += p.incomePerSecond * factor
 	p.responsibilites.Tick(ms)
+	for v := range p.buildings {
+		p.buildings[v].Tick(ms)
+	}
 	return p.head.Tick(ms)
 }
 

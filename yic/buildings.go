@@ -1,11 +1,19 @@
 package yic
 
+import (
+	"github.com/GodsBoss/ld46/pkg/engine"
+)
+
 type building struct {
 	typ    string
 	gridXY vector2D
 	x      int
 	y      int
 	effect buildingEffect
+}
+
+func (b *building) Tick(ms int) *engine.Transition {
+	return tickerTick(ms, b.effect)
 }
 
 type buildingEffect interface{}
