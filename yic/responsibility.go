@@ -41,6 +41,8 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 			for i := range resps.byChain[chainIndex] {
 				if _, ok := respsWithoutHealth[i]; !ok {
 					remaining = append(remaining, resps.byChain[chainIndex][i])
+				} else {
+					resps.p.resources += resps.byChain[chainIndex][i].reward
 				}
 			}
 			resps.byChain[chainIndex] = remaining
@@ -103,6 +105,9 @@ type responsibility struct {
 	// x and y are calculated via position.
 	x float64
 	y float64
+
+	// reward is added to the player's resources when this responsibility is killed.
+	reward float64
 }
 
 func (r *responsibility) receiveDamage(dmg float64) {
