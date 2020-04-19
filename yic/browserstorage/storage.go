@@ -9,7 +9,7 @@ import (
 type Storage struct{}
 
 func (storage *Storage) Get(key string) (string, bool) {
-	jsItem := js.Global().Get("localStorage").Call("getItem")
+	jsItem := js.Global().Get("localStorage").Call("getItem", key)
 	if jsItem.IsNull() {
 		return "", false
 	}
