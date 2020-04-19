@@ -99,6 +99,7 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 	resps.spawnBuffer += resps.spawnSpeed * factor
 	if resps.spawnBuffer > 1.0 {
 		chainIndex := rand.Intn(len(resps.byChain))
+		x, y, _ := resps.p.levels.ChosenLevel().responsibilityPosition(chainIndex, 0)
 		resps.byChain[chainIndex] = append(
 			resps.byChain[chainIndex],
 			&responsibility{
@@ -106,6 +107,8 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 				life:   resps.spawnLife,
 				speed:  0.5 + 0.5*rand.Float64(),
 				reward: resps.spawnReward,
+				x:      x,
+				y:      y,
 			},
 		)
 		resps.spawnBuffer -= 1.0
