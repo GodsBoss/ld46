@@ -25,6 +25,7 @@ func (ls *levelSelect) Init() {
 	for i := range keys {
 		ls.textManager.New("level-"+keys[i], 20, 52+6*i).SetContent(keys[i])
 	}
+	ls.textManager.New("press_t_for_title", 10, 284).SetContent("Press 't' to return to title")
 }
 
 func (ls *levelSelect) Tick(ms int) *engine.Transition {
@@ -36,7 +37,7 @@ func (ls *levelSelect) HandleKeyEvent(event engine.KeyEvent) *engine.Transition 
 		return nil
 	}
 	switch event.Key {
-	case "b":
+	case "t":
 		return engine.NewTransition(titleStateID)
 	}
 	if _, ok := ls.levels.byKey[event.Key]; ok {
