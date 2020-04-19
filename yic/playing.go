@@ -131,6 +131,9 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 		p.buildings[p.gridCursor].x = int(x)
 		p.buildings[p.gridCursor].y = int(y)
 		p.resources -= placeBuilding.cost()
+
+		p.calculateIncomePerSecond()
+
 		return nil
 	}
 	return nil
