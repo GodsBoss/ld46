@@ -19,6 +19,7 @@ type responsibilities struct {
 	wave               int
 
 	defaultTemplate *responsibilityTemplate
+	templates       map[string]*responsibilityTemplate
 }
 
 func (resps *responsibilities) Init() {
@@ -40,6 +41,49 @@ func (resps *responsibilities) Init() {
 
 		baseReward:    25.0,
 		rewardPerWave: 5.0,
+	}
+
+	resps.templates = map[string]*responsibilityTemplate{
+		responsibilityType1: &responsibilityTemplate{
+			baseLife:    150.0,
+			lifePerWave: 40.0,
+
+			baseSpeed:           0.4,
+			potentialSpeedBoost: 0.4,
+
+			baseReward:    45.0,
+			rewardPerWave: 15.0,
+		},
+		responsibilityType2: &responsibilityTemplate{
+			baseLife:    250.0,
+			lifePerWave: 50.0,
+
+			baseSpeed:           0.4,
+			potentialSpeedBoost: 0.4,
+
+			baseReward:    25.0,
+			rewardPerWave: 5.0,
+		},
+		responsibilityType3: &responsibilityTemplate{
+			baseLife:    400.0,
+			lifePerWave: 75.0,
+
+			baseSpeed:           0.2,
+			potentialSpeedBoost: 0.3,
+
+			baseReward:    35.0,
+			rewardPerWave: 10.0,
+		},
+		responsibilityType4: &responsibilityTemplate{
+			baseLife:    150.0,
+			lifePerWave: 40.0,
+
+			baseSpeed:           0.6,
+			potentialSpeedBoost: 0.6,
+
+			baseReward:    25.0,
+			rewardPerWave: 10.0,
+		},
 	}
 
 	resps.enemiesKilled = 0
@@ -113,7 +157,11 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 	if resps.spawnBuffer > 1.0 {
 		chainIndex := rand.Intn(len(resps.byChain))
 		x, y, _ := resps.p.levels.ChosenLevel().responsibilityPosition(chainIndex, 0)
-		resp := resps.defaultTemplate.responsibilityByWave(resps.wave, x, y)
+		tmpl := resps.templates[resps.spawnType]
+		if tmpl == nil {
+			tmpl = resps.defaultTemplate
+		}
+		resp := tmpl.responsibilityByWave(resps.wave, x, y)
 		resp.typ = resps.spawnType
 		resps.byChain[chainIndex] = append(resps.byChain[chainIndex], resp)
 		resps.spawnBuffer -= 1.0
@@ -185,10 +233,10 @@ func (tmpl *responsibilityTemplate) responsibilityByWave(wave int, x, y float64)
 }
 
 const (
-	responsibilityType1 = "responsibility_1"
-	responsibilityType2 = "responsibility_2"
-	responsibilityType3 = "responsibility_3"
-	responsibilityType4 = "responsibility_4"
+	responsibilityType1 = "responsibility_1" // Money
+	responsibilityType2 = "responsibility_2" // Work
+	responsibilityType3 = "responsibility_3" // House
+	responsibilityType4 = "responsibility_4" // Car
 )
 
 var nextSpawnType = map[string]string{
