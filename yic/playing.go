@@ -11,7 +11,7 @@ type playing struct {
 
 	head *head
 
-	responsibilites map[int][]*responsibility
+	responsibilites *responsibilities
 	phase           int
 	resources       float64
 	incomePerSecond float64
@@ -27,48 +27,16 @@ func (p *playing) Init() {
 	p.buildings = make(map[vector2D]*building)
 	p.resources = startResources
 	p.calculateIncomePerSecond()
-	p.responsibilites = make(map[int][]*responsibility)
-	for chainIndex := range p.levels.ChosenLevel().chains {
-		p.responsibilites[chainIndex] = make([]*responsibility, 0)
+	p.responsibilites = &responsibilities{
+		p: p,
 	}
-	p.responsibilites[0] = append(
-		p.responsibilites[0],
-		&responsibility{
-			typ:      responsibilityType1,
-			speed:    12.5,
-			position: -5.0,
-			life:     1500,
-		},
-	)
+	p.responsibilites.Init()
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.resources += p.incomePerSecond * factor
-	for chainIndex := range p.responsibilites {
-		respsToRemove := make(map[int]struct{})
-		for i := range p.responsibilites[chainIndex] {
-			var headReached bool
-			resp := p.responsibilites[chainIndex][i]
-			resp.position += resp.speed * factor
-			resp.x, resp.y, headReached = p.levels.ChosenLevel().responsibilityPosition(chainIndex, resp.position)
-			if headReached {
-				respsToRemove[i] = struct{}{}
-			}
-		}
-		if len(respsToRemove) > 0 {
-			remaining := make([]*responsibility, 0, len(p.responsibilites)-len(respsToRemove))
-			for i := range p.responsibilites[chainIndex] {
-				resp := p.responsibilites[chainIndex][i]
-				if _, okRemove := respsToRemove[i]; okRemove {
-					p.head.receiveDamage(resp.life)
-				} else {
-					remaining = append(remaining, resp)
-				}
-			}
-			p.responsibilites[chainIndex] = remaining
-		}
-	}
+	p.responsibilites.Tick(ms)
 	return p.head.Tick(ms)
 }
 
@@ -186,18 +154,7 @@ func (p *playing) Objects() map[string][]engine.Object {
 		)
 	}
 
-	for chainIndex := range p.responsibilites {
-		for i := range p.responsibilites[chainIndex] {
-			objects["entities"] = append(
-				objects["entities"],
-				engine.Object{
-					Key: p.responsibilites[chainIndex][i].typ,
-					X:   int(p.responsibilites[chainIndex][i].x),
-					Y:   int(p.responsibilites[chainIndex][i].y),
-				},
-			)
-		}
-	}
+	objects["entities"] = append(objects["entities"], p.responsibilites.Objects()...)
 
 	if p.levels.ChosenLevel().isOnGrid(p.gridCursor.X, p.gridCursor.Y) {
 		cx, cy := lvl.realCoordinate(p.gridCursor.X, p.gridCursor.Y)
@@ -224,24 +181,5 @@ var fieldSize = vector2D{
 	X: 18,
 	Y: 18,
 }
-
-type responsibility struct {
-	typ   string
-	life  float64
-	speed float64
-
-	// position is the position of the responsibility on its chain.
-	position float64
-
-	// x and y are calculated via position.
-	x float64
-	y float64
-}
-
-const (
-	responsibilityType1 = "responsibility_1"
-	responsibilityType2 = "responsibility_2"
-	responsibilityType3 = "responsibility_3"
-)
 
 const startResources = 1000.0
