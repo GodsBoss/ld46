@@ -27,6 +27,20 @@ func Sprites() map[string]ui.Sprite {
 			H:      fieldSize.Y,
 			Frames: 1,
 		},
+		"title_yes": ui.Sprite{
+			X:      36,
+			Y:      18,
+			W:      18,
+			H:      18,
+			Frames: 1,
+		},
+		"title_no": ui.Sprite{
+			X:      36,
+			Y:      36,
+			W:      18,
+			H:      18,
+			Frames: 1,
+		},
 		"head_toddler": ui.Sprite{
 			X:      72,
 			Y:      0,
