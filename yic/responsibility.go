@@ -14,6 +14,9 @@ type responsibilities struct {
 	spawnBuffer        float64
 	spawnSpeed         float64
 	spawnSpeedIncrease float64
+	spawnLife          float64
+	spawnType          string
+	spawnReward        float64
 }
 
 func (resps *responsibilities) Init() {
@@ -22,8 +25,11 @@ func (resps *responsibilities) Init() {
 		resps.byChain[chainIndex] = make([]*responsibility, 0)
 	}
 
-	resps.spawnSpeedIncrease = 0.001
-	resps.spawnSpeed = 0.5
+	resps.spawnSpeedIncrease = 0.05
+	resps.spawnSpeed = initialSpawnSpeed
+	resps.spawnLife = initialSpawnLife
+	resps.spawnType = responsibilityType1
+	resps.spawnReward = initialSpawnReward
 }
 
 func (resps *responsibilities) Tick(ms int) *engine.Transition {
@@ -78,15 +84,22 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 
 	// Spawn new resps.
 	resps.spawnSpeed += resps.spawnSpeedIncrease * factor
+	if resps.spawnSpeed > spawnSpeedThreshold {
+		resps.spawnSpeed = initialSpawnSpeed
+		resps.spawnLife += spawnLifeIncrease
+		resps.spawnType = nextSpawnType[resps.spawnType]
+		resps.spawnReward += spawnRewardIncrease
+	}
 	resps.spawnBuffer += resps.spawnSpeed * factor
 	if resps.spawnBuffer > 1.0 {
 		chainIndex := rand.Intn(len(resps.byChain))
 		resps.byChain[chainIndex] = append(
 			resps.byChain[chainIndex],
 			&responsibility{
-				typ:   responsibilityType1,
-				life:  250.0,
-				speed: 0.5 + 0.5*rand.Float64(),
+				typ:    resps.spawnType,
+				life:   resps.spawnLife,
+				speed:  0.5 + 0.5*rand.Float64(),
+				reward: resps.spawnReward,
 			},
 		)
 		resps.spawnBuffer -= 1.0
@@ -137,3 +150,19 @@ const (
 	responsibilityType2 = "responsibility_2"
 	responsibilityType3 = "responsibility_3"
 )
+
+var nextSpawnType = map[string]string{
+	responsibilityType1: responsibilityType2,
+	responsibilityType2: responsibilityType3,
+	responsibilityType3: responsibilityType1,
+}
+
+const initialSpawnSpeed = 1.0
+const initialSpawnLife = 250.0
+const initialSpawnReward = 25.0
+
+// spawnSpeedThreshold is the threshold for the spawn speed to reset, increase spawn's life and rewards, and switch the spawn type.
+const spawnSpeedThreshold = 1.5
+
+const spawnLifeIncrease = 50.0
+const spawnRewardIncrease = 5.0
