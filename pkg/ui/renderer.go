@@ -58,6 +58,10 @@ func (renderer *Renderer) drawObject(dest *dom.Context2D, object engine.Object) 
 		}
 		frame = int(animation * float64(sprite.Frames))
 	}
+	scale := 1
+	if object.Scale > 1 {
+		scale = object.Scale
+	}
 	dest.DrawImage(
 		renderer.GFXSource,
 		sprite.X+sprite.W*frame,
@@ -66,8 +70,8 @@ func (renderer *Renderer) drawObject(dest *dom.Context2D, object engine.Object) 
 		sprite.H,
 		object.X*renderer.zoom(),
 		object.Y*renderer.zoom(),
-		sprite.W*renderer.zoom(),
-		sprite.H*renderer.zoom(),
+		sprite.W*renderer.zoom()*scale,
+		sprite.H*renderer.zoom()*scale,
 	)
 }
 

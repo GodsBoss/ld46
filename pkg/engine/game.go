@@ -80,4 +80,6 @@ type Object struct {
 	// Animation is the progress of animation. 0 is the start, 1 is the end. Still
 	// works if above or below this interval.
 	Animation float64
+
+	Scale int
 }

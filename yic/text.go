@@ -55,25 +55,36 @@ type text struct {
 	x       int
 	y       int
 	s       string
+	scale   int
 	objects []engine.Object
 }
 
 func (t *text) SetContent(s string) {
 	lines := strings.Split(s, "\n")
 	t.objects = make([]engine.Object, 0)
+	scale := t.scale
+	if scale < 1 {
+		scale = 1
+	}
 	for j := range lines {
 		chars := strings.Split(t.tm.stringMap(lines[j]), "")
 		for i := range chars {
 			t.objects = append(
 				t.objects,
 				engine.Object{
-					Key: "char_" + chars[i],
-					X:   t.x + i*6,
-					Y:   t.y + j*6,
+					Key:   "char_" + chars[i],
+					X:     t.x + i*6*scale,
+					Y:     t.y + j*6,
+					Scale: scale,
 				},
 			)
 		}
 	}
+}
+
+func (t *text) SetScale(scale int) *text {
+	t.scale = scale
+	return t
 }
 
 const allowedChars = "01234567890abcdefghijklmnopqrstuvwxyz.,:;-_()<>!? "
