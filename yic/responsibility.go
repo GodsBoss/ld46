@@ -124,6 +124,7 @@ func (resps *responsibilities) Objects() []engine.Object {
 					Key:       resps.byChain[chainIndex][i].typ,
 					X:         int(resps.byChain[chainIndex][i].x),
 					Y:         int(resps.byChain[chainIndex][i].y),
+					Z:         int(resps.byChain[chainIndex][i].y * 1000.0),
 					Animation: resps.byChain[chainIndex][i].animation,
 				},
 			)
