@@ -6,9 +6,14 @@ import (
 
 const titleStateID = "title"
 
-type title struct{}
+type title struct {
+	textManager *textManager
+}
 
-func (t *title) Init() {}
+func (t *title) Init() {
+	t.textManager = newTextManager()
+	t.textManager.New("level_select_hint", 20, 100).SetContent("Press L for level selection")
+}
 
 func (t *title) Tick(ms int) *engine.Transition {
 	return nil
@@ -36,5 +41,6 @@ func (t *title) Objects() map[string][]engine.Object {
 				Y:   0,
 			},
 		},
+		"ui": t.textManager.Objects(),
 	}
 }
