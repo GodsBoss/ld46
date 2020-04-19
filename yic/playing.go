@@ -1,6 +1,8 @@
 package yic
 
 import (
+	"strconv"
+
 	"github.com/GodsBoss/ld46/pkg/engine"
 )
 
@@ -36,6 +38,7 @@ func (p *playing) Init() {
 		p: p,
 	}
 	p.responsibilites.Init()
+	p.textManager.New("resources", 5, 5).SetContent("Resources: " + strconv.Itoa(int(p.resources)))
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
@@ -112,6 +115,7 @@ func (p *playing) HandleMouseEvent(event engine.MouseEvent) *engine.Transition {
 }
 
 func (p *playing) Objects() map[string][]engine.Object {
+	p.textManager.Get("resources").SetContent("Resources: " + strconv.Itoa(int(p.resources)))
 	lvl := p.levels.ChosenLevel()
 	headX, headY := lvl.realCoordinate(lvl.headX, lvl.headY)
 	objects := map[string][]engine.Object{
