@@ -1,7 +1,5 @@
 package yic
 
-import "fmt"
-
 type building interface {
 	gridXY() vector2D
 }
@@ -39,7 +37,6 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 			fieldBuildSpot: struct{}{},
 		},
 		newBuilding: func(pos vector2D) building {
-			fmt.Println("placed income building at " + pos.String())
 			return &incomeBuilding{
 				pos: pos,
 			}
