@@ -159,12 +159,14 @@ const (
 	responsibilityType1 = "responsibility_1"
 	responsibilityType2 = "responsibility_2"
 	responsibilityType3 = "responsibility_3"
+	responsibilityType4 = "responsibility_4"
 )
 
 var nextSpawnType = map[string]string{
 	responsibilityType1: responsibilityType2,
 	responsibilityType2: responsibilityType3,
-	responsibilityType3: responsibilityType1,
+	responsibilityType3: responsibilityType4,
+	responsibilityType4: responsibilityType1,
 }
 
 const initialSpawnSpeed = 1.0
