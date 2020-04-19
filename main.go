@@ -11,6 +11,7 @@ import (
 	"github.com/GodsBoss/ld46/pkg/errors"
 	"github.com/GodsBoss/ld46/pkg/ui"
 	"github.com/GodsBoss/ld46/yic"
+	"github.com/GodsBoss/ld46/yic/browserstorage"
 )
 
 func main() {
@@ -49,7 +50,7 @@ func run() error {
 	errsChan := make(chan error)
 	img.On(
 		func() {
-			game := yic.NewGame()
+			game := yic.NewGame(&browserstorage.Storage{})
 			dom.AddEventListener(
 				w,
 				"keydown",

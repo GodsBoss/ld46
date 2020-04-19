@@ -4,7 +4,7 @@ import (
 	"github.com/GodsBoss/ld46/pkg/engine"
 )
 
-func NewGame() *engine.Game {
+func NewGame(storage Storage) *engine.Game {
 	lvls := createLevels()
 	game := &engine.Game{
 		States: map[string]engine.State{
@@ -15,10 +15,20 @@ func NewGame() *engine.Game {
 			levelSelectStateID: &levelSelect{
 				levels: lvls,
 			},
-			hiscoreStateID:  &hiscore{},
+			hiscoreStateID: &hiscore{
+				storage: storage,
+			},
 			gameOverStateID: &gameOver{},
 		},
 	}
 	game.Transition(titleStateID)
 	return game
+}
+
+type Storage interface {
+	Get(key string) (string, bool)
+
+	Set(key string, value string) error
+
+	Clear()
 }

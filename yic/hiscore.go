@@ -8,6 +8,7 @@ const hiscoreStateID = "hiscore"
 
 type hiscore struct {
 	textManager *textManager
+	storage     Storage
 }
 
 func (h *hiscore) Init() {
@@ -25,6 +26,9 @@ func (h *hiscore) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 	}
 	if event.Key == "t" {
 		return engine.NewTransition(titleStateID)
+	}
+	if event.Key == "c" {
+		h.storage.Clear()
 	}
 	return nil
 }
