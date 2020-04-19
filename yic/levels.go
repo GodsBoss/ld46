@@ -334,16 +334,16 @@ var levelTwo = `
 `
 
 var levelThree = `
-X>....vXXXX.OO
-X>....vX...XOO
-X>....vX...X..
-X>....vX...X..
-XXXXX..XXXX...
-v.....<>....^.
-.X......XXXXX.
-.X......X.....
-.XXXXX..XXXXX.
-...X....X...X.
-...X....XXXXX.
->......^......
+.>XXXXv....XOO
+.>XXXXv.XXX.OO
+.>XXXXv.XXX.XX
+.>XXXXv.XXX.XX
+.....XX....XXX
+vXXXXX<>XXXX^X
+X.XXXXXX.....X
+X.XXXXXX.XXXXX
+X.....XX.....X
+XXX.XXXX.XXX.X
+XXX.XXXX.....X
+>XXXXXX^XXXXXX
 `
