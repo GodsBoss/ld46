@@ -45,6 +45,7 @@ func (p *playing) Init() {
 	p.textManager.New("brain", 5, 288).SetContent("[1]: Brain (passive income) - Cost: " + strconv.Itoa(int(keyPlaceBuildingMapping["1"].cost())))
 	p.textManager.New("neuron", 5, 294).SetContent("[2]: Neuron (weapon)        - Cost: " + strconv.Itoa(int(keyPlaceBuildingMapping["2"].cost())))
 	p.textManager.New("points", 5, 17).SetContent("Points: 0")
+	p.textManager.New("quit_x", 270, 5).SetContent("Press X to exit level")
 }
 
 func (p *playing) Tick(ms int) *engine.Transition {
