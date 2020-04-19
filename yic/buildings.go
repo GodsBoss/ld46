@@ -21,13 +21,13 @@ type buildingEffect interface{}
 type placeBuilding interface {
 	cost() float64
 	fieldTypes() map[int]struct{}
-	building(pos vector2D) *building
+	building(p *playing, pos vector2D) *building
 }
 
 type simplePlaceBuilding struct {
 	cst         float64
 	fldTypes    map[int]struct{}
-	newBuilding func(pos vector2D) *building
+	newBuilding func(p *playing, pos vector2D) *building
 }
 
 func (pb *simplePlaceBuilding) cost() float64 {
@@ -38,8 +38,8 @@ func (pb *simplePlaceBuilding) fieldTypes() map[int]struct{} {
 	return pb.fldTypes
 }
 
-func (pb *simplePlaceBuilding) building(pos vector2D) *building {
-	return pb.newBuilding(pos)
+func (pb *simplePlaceBuilding) building(p *playing, pos vector2D) *building {
+	return pb.newBuilding(p, pos)
 }
 
 var _ placeBuilding = &simplePlaceBuilding{}
@@ -50,12 +50,28 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 		fldTypes: map[int]struct{}{
 			fieldBuildSpot: struct{}{},
 		},
-		newBuilding: func(pos vector2D) *building {
+		newBuilding: func(_ *playing, pos vector2D) *building {
 			return &building{
 				typ:    "building_income",
 				gridXY: pos,
 				effect: &incomeBuildingEffect{},
 			}
+		},
+	},
+	"2": &simplePlaceBuilding{
+		cst: 750.0,
+		fldTypes: map[int]struct{}{
+			fieldBuildSpot: struct{}{},
+		},
+		newBuilding: func(p *playing, pos vector2D) *building {
+			b := &building{
+				typ:    "building_gun",
+				gridXY: pos,
+				effect: &gun{
+					p: p,
+				},
+			}
+			return b
 		},
 	},
 }

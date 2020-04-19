@@ -85,7 +85,7 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 		}
 
 		// Finally, build building.
-		p.buildings[p.gridCursor] = placeBuilding.building(p.gridCursor)
+		p.buildings[p.gridCursor] = placeBuilding.building(p, p.gridCursor)
 		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(p.gridCursor.X), float64(p.gridCursor.Y))
 		p.buildings[p.gridCursor].x = int(x)
 		p.buildings[p.gridCursor].y = int(y)
