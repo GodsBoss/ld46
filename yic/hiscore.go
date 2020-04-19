@@ -23,7 +23,10 @@ func (h *hiscore) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 	if event.Type != engine.KeyUp {
 		return nil
 	}
-	return engine.NewTransition(titleStateID)
+	if event.Key == "t" {
+		return engine.NewTransition(titleStateID)
+	}
+	return nil
 }
 
 func (h *hiscore) Objects() map[string][]engine.Object {
