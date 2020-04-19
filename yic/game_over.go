@@ -52,5 +52,9 @@ Devoid of everything you once was, only an empty
 shell remained, mindlessly living the same day every
 day. A boring existence without ups or downs.
 
+Basically dead inside, you will never experience
+the wonders you had in your childhood again, the
+fantasy gone forever with no chance of recovery.
+
 Have a good day!
 `
