@@ -5,14 +5,16 @@ import (
 )
 
 type building struct {
-	typ    string
-	gridXY vector2D
-	x      int
-	y      int
-	effect buildingEffect
+	typ       string
+	gridXY    vector2D
+	x         int
+	y         int
+	effect    buildingEffect
+	animation float64
 }
 
 func (b *building) Tick(ms int) *engine.Transition {
+	b.animation += float64(ms) / 1000.0
 	return tickerTick(ms, b.effect)
 }
 

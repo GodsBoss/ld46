@@ -155,9 +155,10 @@ func (p *playing) Objects() map[string][]engine.Object {
 		objects["entities"] = append(
 			objects["entities"],
 			engine.Object{
-				Key: p.buildings[v].typ,
-				X:   p.buildings[v].x,
-				Y:   p.buildings[v].y,
+				Key:       p.buildings[v].typ,
+				X:         p.buildings[v].x,
+				Y:         p.buildings[v].y,
+				Animation: p.buildings[v].animation,
 			},
 		)
 	}
