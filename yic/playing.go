@@ -27,6 +27,7 @@ type playing struct {
 func (p *playing) Init() {
 	p.fxManager = newFXManager()
 	p.textManager = newTextManager()
+	p.textManager.New("res_p_sec", 5, 11).SetContent("Per second: ")
 	p.head = &head{
 		p: p,
 	}
@@ -63,6 +64,7 @@ func (p *playing) calculateIncomePerSecond() {
 			p.incomePerSecond += provider.IncomePerSecond()
 		}
 	}
+	p.textManager.Get("res_p_sec").SetContent("Per second: " + strconv.Itoa(int(p.incomePerSecond)))
 }
 
 type incomeProviderBuilding interface {
