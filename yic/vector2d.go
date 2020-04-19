@@ -1,7 +1,7 @@
 package yic
 
 import (
-	"fmt"
+	"strconv"
 )
 
 type vector2D struct {
@@ -30,7 +30,7 @@ func (v vector2D) sum() int {
 }
 
 func (v vector2D) String() string {
-	return fmt.Sprintf("(%d, %d)", v.X, v.Y)
+	return "(" + strconv.Itoa(v.X) + ", " + strconv.Itoa(v.Y) + ")"
 }
 
 func addVector2Ds(vs ...vector2D) vector2D {
