@@ -69,6 +69,7 @@ func createLevels() *levels {
 	return &levels{
 		byKey: map[string]level{
 			"1": parseLevel(levelOne),
+			"2": parseLevel(levelTwo),
 		},
 	}
 }
@@ -322,4 +323,11 @@ XXX.......
 .........X
 .^...<...X
 X.......^.
+`
+
+var levelTwo = `
+>.v......v.<..
+....>.OO......
+......OO.<....
+..>.^......^.<
 `
