@@ -6,9 +6,14 @@ import (
 
 const hiscoreStateID = "hiscore"
 
-type hiscore struct{}
+type hiscore struct {
+	textManager *textManager
+}
 
-func (h *hiscore) Init() {}
+func (h *hiscore) Init() {
+	h.textManager = newTextManager()
+	h.textManager.New("press_t_for_title", 10, 284).SetContent("Press 't' to return to title")
+}
 
 func (h *hiscore) Tick(ms int) *engine.Transition {
 	return nil
@@ -30,5 +35,6 @@ func (h *hiscore) Objects() map[string][]engine.Object {
 				Y:   0,
 			},
 		},
+		"ui": h.textManager.Objects(),
 	}
 }
