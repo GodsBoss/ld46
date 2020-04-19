@@ -36,6 +36,7 @@ func (g *gun) Tick(ms int) *engine.Transition {
 				resp.receiveDamage(gunDmg)
 				g.p.fxManager.addFXWithin("gun_shot", int(g.x), int(g.y), int(g.x)+14, int(g.y)+14)
 				g.p.fxManager.addFXWithin("gun_hit", int(resp.x), int(resp.y), int(resp.x)+12, int(resp.y)+12)
+				return nil
 			}
 		}
 	}
