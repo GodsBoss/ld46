@@ -59,13 +59,19 @@ type text struct {
 }
 
 func (t *text) SetContent(s string) {
-	chars := strings.Split(t.tm.stringMap(s), "")
-	t.objects = make([]engine.Object, len(chars))
-	for i := range chars {
-		t.objects[i] = engine.Object{
-			Key: "char_" + chars[i],
-			X:   t.x + i*6,
-			Y:   t.y,
+	lines := strings.Split(s, "\n")
+	t.objects = make([]engine.Object, 0)
+	for j := range lines {
+		chars := strings.Split(t.tm.stringMap(lines[j]), "")
+		for i := range chars {
+			t.objects = append(
+				t.objects,
+				engine.Object{
+					Key: "char_" + chars[i],
+					X:   t.x + i*6,
+					Y:   t.y + j*6,
+				},
+			)
 		}
 	}
 }
