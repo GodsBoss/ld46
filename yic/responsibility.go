@@ -27,22 +27,43 @@ func (resps *responsibilities) Init() {
 
 func (resps *responsibilities) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
+
+	// Check for resps without health and remove them.
 	for chainIndex := range resps.byChain {
-		respsToRemove := make(map[int]struct{})
+		respsWithoutHealth := make(map[int]struct{})
+		for i := range resps.byChain[chainIndex] {
+			if resps.byChain[chainIndex][i].life <= 0 {
+				respsWithoutHealth[i] = struct{}{}
+			}
+		}
+		if len(respsWithoutHealth) > 0 {
+			remaining := make([]*responsibility, 0)
+			for i := range resps.byChain[chainIndex] {
+				if _, ok := respsWithoutHealth[i]; !ok {
+					remaining = append(remaining, resps.byChain[chainIndex][i])
+				}
+			}
+			resps.byChain[chainIndex] = remaining
+		}
+	}
+
+	// Move all resps, then check wether they reached head.
+	for chainIndex := range resps.byChain {
+		respsAtHead := make(map[int]struct{})
 		for i := range resps.byChain[chainIndex] {
 			var headReached bool
 			resp := resps.byChain[chainIndex][i]
 			resp.position += resp.speed * factor
 			resp.x, resp.y, headReached = resps.p.levels.ChosenLevel().responsibilityPosition(chainIndex, resp.position)
 			if headReached {
-				respsToRemove[i] = struct{}{}
+				respsAtHead[i] = struct{}{}
 			}
 		}
-		if len(respsToRemove) > 0 {
-			remaining := make([]*responsibility, 0, len(resps.byChain)-len(respsToRemove))
+		if len(respsAtHead) > 0 {
+			remaining := make([]*responsibility, 0, len(resps.byChain)-len(respsAtHead))
 			for i := range resps.byChain[chainIndex] {
 				resp := resps.byChain[chainIndex][i]
-				if _, okRemove := respsToRemove[i]; okRemove {
+				if _, okRemove := respsAtHead[i]; okRemove {
 					resps.p.head.receiveDamage(resp.life)
 				} else {
 					remaining = append(remaining, resp)
@@ -82,6 +103,10 @@ type responsibility struct {
 	// x and y are calculated via position.
 	x float64
 	y float64
+}
+
+func (r *responsibility) receiveDamage(dmg float64) {
+	r.life -= dmg
 }
 
 const (

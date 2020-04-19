@@ -64,11 +64,14 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 			fieldBuildSpot: struct{}{},
 		},
 		newBuilding: func(p *playing, pos vector2D) *building {
+			x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(pos.X), float64(pos.Y))
 			b := &building{
 				typ:    "building_gun",
 				gridXY: pos,
 				effect: &gun{
 					p: p,
+					x: x,
+					y: y,
 				},
 			}
 			return b

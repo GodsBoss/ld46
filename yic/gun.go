@@ -1,11 +1,16 @@
 package yic
 
 import (
+	"math"
+
 	"github.com/GodsBoss/ld46/pkg/engine"
 )
 
 type gun struct {
 	p *playing
+
+	x float64
+	y float64
 
 	reloading float64
 }
@@ -22,7 +27,22 @@ func (g *gun) Tick(ms int) *engine.Transition {
 		return nil
 	}
 
+	for _, chain := range g.p.responsibilites.byChain {
+		for _, resp := range chain {
+			dist := math.Sqrt((g.x-resp.x)*(g.x-resp.x) + (g.y-resp.y)*(g.y-resp.y))
+			if dist <= gunRange {
+				// Shoot!
+				g.reloading = gunReload
+				resp.receiveDamage(gunDmg)
+			}
+		}
+	}
+
 	return nil
 }
 
-const gunRange = 100.0
+const gunRange = 40.0
+const gunDmg = 75.0
+
+// gunReload is the gun's reloading time in seconds.
+const gunReload = 0.5
