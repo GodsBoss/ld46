@@ -1,8 +1,6 @@
 package yic
 
 import (
-	"math"
-
 	"github.com/GodsBoss/ld46/pkg/engine"
 )
 
@@ -11,10 +9,10 @@ const playingStateID = "playing"
 type playing struct {
 	levels *levels
 
-	headAnimation   float64
+	head *head
+
 	responsibilites map[int][]*responsibility
 	phase           int
-	headHealth      float64
 	resources       float64
 	incomePerSecond float64
 	gridCursor      vector2D
@@ -22,12 +20,13 @@ type playing struct {
 }
 
 func (p *playing) Init() {
+	p.head = &head{
+		p: p,
+	}
+	p.head.Init()
 	p.buildings = make(map[vector2D]*building)
-	p.phase = 1
 	p.resources = startResources
 	p.calculateIncomePerSecond()
-	p.headAnimation = 0.0
-	p.headHealth = healthPerPhase
 	p.responsibilites = make(map[int][]*responsibility)
 	for chainIndex := range p.levels.ChosenLevel().chains {
 		p.responsibilites[chainIndex] = make([]*responsibility, 0)
@@ -45,7 +44,6 @@ func (p *playing) Init() {
 
 func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
-	p.headAnimation = math.Mod(p.headAnimation+factor, 1.0)
 	p.resources += p.incomePerSecond * factor
 	for chainIndex := range p.responsibilites {
 		respsToRemove := make(map[int]struct{})
@@ -63,7 +61,7 @@ func (p *playing) Tick(ms int) *engine.Transition {
 			for i := range p.responsibilites[chainIndex] {
 				resp := p.responsibilites[chainIndex][i]
 				if _, okRemove := respsToRemove[i]; okRemove {
-					p.headHealth -= resp.life
+					p.head.receiveDamage(resp.life)
 				} else {
 					remaining = append(remaining, resp)
 				}
@@ -71,19 +69,11 @@ func (p *playing) Tick(ms int) *engine.Transition {
 			p.responsibilites[chainIndex] = remaining
 		}
 	}
-	if p.headHealth < 0.0 {
-		if p.phase == 3 {
-			return engine.NewTransition(gameOverStateID)
-		}
-		p.phase++
-		p.calculateIncomePerSecond()
-		p.headHealth = healthPerPhase
-	}
-	return nil
+	return p.head.Tick(ms)
 }
 
 func (p *playing) calculateIncomePerSecond() {
-	p.incomePerSecond = baseResourcesPerSecondPerPhase[p.phase]
+	p.incomePerSecond = p.head.IncomePerSecond()
 	for v := range p.buildings {
 		if provider, ok := p.buildings[v].effect.(incomeProviderBuilding); ok {
 			p.incomePerSecond += provider.IncomePerSecond()
@@ -158,10 +148,10 @@ func (p *playing) Objects() map[string][]engine.Object {
 		"fields": []engine.Object{},
 		"entities": []engine.Object{
 			engine.Object{
-				Key:       phaseHeadMapping[p.phase],
+				Key:       p.head.key(),
 				X:         headX,
 				Y:         headY,
-				Animation: p.headAnimation,
+				Animation: p.head.animation,
 			},
 		},
 	}
@@ -254,24 +244,4 @@ const (
 	responsibilityType3 = "responsibility_3"
 )
 
-const (
-	phaseToddler = 1
-	phaseChild   = 2
-	phaseTeen    = 3
-)
-
-var phaseHeadMapping = map[int]string{
-	phaseToddler: "head_toddler",
-	phaseChild:   "head_child",
-	phaseTeen:    "head_teen",
-}
-
-const healthPerPhase = 1000.0
-
 const startResources = 1000.0
-
-var baseResourcesPerSecondPerPhase = map[int]float64{
-	phaseToddler: 100.0,
-	phaseChild:   75.0,
-	phaseTeen:    60.0,
-}
