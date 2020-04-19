@@ -9,7 +9,8 @@ import (
 const playingStateID = "playing"
 
 type playing struct {
-	levels *levels
+	levels       *levels
+	hiscoreLists *hiscoreLists
 
 	head *head
 
@@ -50,12 +51,20 @@ func (p *playing) Tick(ms int) *engine.Transition {
 	factor := float64(ms) / 1000.0
 	p.resources += p.incomePerSecond * factor
 	p.responsibilites.Tick(ms)
-	p.textManager.Get("points").SetContent("Points: " + strconv.Itoa(p.responsibilites.enemiesKilled*pointsPerEnemy))
+	p.textManager.Get("points").SetContent("Points: " + strconv.Itoa(p.points()))
 	for v := range p.buildings {
 		p.buildings[v].Tick(ms)
 	}
 	p.fxManager.Tick(ms)
-	return p.head.Tick(ms)
+	transition := p.head.Tick(ms)
+	if transition != nil {
+		p.hiscoreLists.Add(p.levels.chosen, "you", p.points())
+	}
+	return transition
+}
+
+func (p *playing) points() int {
+	return p.responsibilites.enemiesKilled * pointsPerEnemy
 }
 
 func (p *playing) calculateIncomePerSecond() {

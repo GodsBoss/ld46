@@ -5,18 +5,23 @@ import (
 )
 
 func NewGame(storage Storage) *engine.Game {
+	hsLists := &hiscoreLists{
+		storage: storage,
+	}
+	hsLists.Load()
 	lvls := createLevels()
 	game := &engine.Game{
 		States: map[string]engine.State{
 			titleStateID: &title{},
 			playingStateID: &playing{
-				levels: lvls,
+				levels:       lvls,
+				hiscoreLists: hsLists,
 			},
 			levelSelectStateID: &levelSelect{
 				levels: lvls,
 			},
 			hiscoreStateID: &hiscore{
-				storage: storage,
+				lists: hsLists,
 			},
 			gameOverStateID: &gameOver{},
 		},
