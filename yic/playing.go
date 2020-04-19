@@ -11,7 +11,8 @@ type playing struct {
 
 	head *head
 
-	fxManager *fxManager
+	fxManager   *fxManager
+	textManager *textManager
 
 	responsibilites *responsibilities
 	phase           int
@@ -23,6 +24,7 @@ type playing struct {
 
 func (p *playing) Init() {
 	p.fxManager = newFXManager()
+	p.textManager = newTextManager()
 	p.head = &head{
 		p: p,
 	}
@@ -130,6 +132,7 @@ func (p *playing) Objects() map[string][]engine.Object {
 			},
 		},
 		"fx": p.fxManager.Objects(),
+		"ui": p.textManager.Objects(),
 	}
 
 	for row := range lvl.fields {
