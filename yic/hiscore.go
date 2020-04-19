@@ -19,7 +19,7 @@ type hiscore struct {
 func (h *hiscore) Init() {
 	h.textManager = newTextManager()
 	h.textManager.New("press_t_for_title", 10, 284).SetContent("Press 't' to return to title")
-	h.textManager.New("press_t_for_title", 30, 10).SetScale(2).SetContent("Hall Of Fame")
+	h.textManager.New("hall_of_fame", 30, 10).SetScale(2).SetContent("Hall Of Fame")
 
 	levelKeys := make([]string, 0, len(h.lists.hiscoresByLevel))
 	for key := range h.lists.hiscoresByLevel {
