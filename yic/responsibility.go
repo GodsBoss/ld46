@@ -1,6 +1,8 @@
 package yic
 
 import (
+	"math/rand"
+
 	"github.com/GodsBoss/ld46/pkg/engine"
 )
 
@@ -8,6 +10,10 @@ type responsibilities struct {
 	p *playing
 
 	byChain map[int][]*responsibility
+
+	spawnBuffer        float64
+	spawnSpeed         float64
+	spawnSpeedIncrease float64
 }
 
 func (resps *responsibilities) Init() {
@@ -15,14 +21,9 @@ func (resps *responsibilities) Init() {
 	for chainIndex := range resps.p.levels.ChosenLevel().chains {
 		resps.byChain[chainIndex] = make([]*responsibility, 0)
 	}
-	resps.byChain[0] = append(
-		resps.byChain[0],
-		&responsibility{
-			typ:   responsibilityType1,
-			life:  1500,
-			speed: 2.5,
-		},
-	)
+
+	resps.spawnSpeedIncrease = 0.001
+	resps.spawnSpeed = 0.5
 }
 
 func (resps *responsibilities) Tick(ms int) *engine.Transition {
@@ -74,6 +75,23 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 			resps.byChain[chainIndex] = remaining
 		}
 	}
+
+	// Spawn new resps.
+	resps.spawnSpeed += resps.spawnSpeedIncrease * factor
+	resps.spawnBuffer += resps.spawnSpeed * factor
+	if resps.spawnBuffer > 1.0 {
+		chainIndex := rand.Intn(len(resps.byChain))
+		resps.byChain[chainIndex] = append(
+			resps.byChain[chainIndex],
+			&responsibility{
+				typ:   responsibilityType1,
+				life:  250.0,
+				speed: 0.5 + 0.5*rand.Float64(),
+			},
+		)
+		resps.spawnBuffer -= 1.0
+	}
+
 	return nil
 }
 
