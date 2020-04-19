@@ -166,10 +166,17 @@ func (p *playing) Objects() map[string][]engine.Object {
 
 	if p.levels.ChosenLevel().isOnGrid(p.gridCursor.X, p.gridCursor.Y) {
 		cx, cy := lvl.realCoordinate(p.gridCursor.X, p.gridCursor.Y)
+		key := "grid_cursor_no"
+		if p.levels.ChosenLevel().fields[p.gridCursor.Y][p.gridCursor.X].typ == fieldBuildSpot {
+			key = "grid_cursor"
+			if p.buildings[p.gridCursor] == nil {
+				key = "grid_cursor_yes"
+			}
+		}
 		objects["ui"] = append(
 			objects["ui"],
 			engine.Object{
-				Key: "grid_cursor",
+				Key: key,
 				X:   cx,
 				Y:   cy,
 			},

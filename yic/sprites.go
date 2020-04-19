@@ -118,6 +118,20 @@ func Sprites() map[string]ui.Sprite {
 			H:      18,
 			Frames: 1,
 		},
+		"grid_cursor_yes": ui.Sprite{
+			X:      18,
+			Y:      18,
+			W:      18,
+			H:      18,
+			Frames: 1,
+		},
+		"grid_cursor_no": ui.Sprite{
+			X:      18,
+			Y:      36,
+			W:      18,
+			H:      18,
+			Frames: 1,
+		},
 		"building_income": ui.Sprite{
 			X:      72,
 			Y:      124,
