@@ -107,6 +107,7 @@ func run() error {
 				errsChan <- err
 				close(errsChan)
 			}
+			context2D.DisableImageSmoothing()
 			renderer := ui.NewRenderer(img, yic.Sprites(), []string{"background", "fields", "entities", "fx", "ui"})
 			renderer.Zoom = zoom
 			var reqAnimationFrameCallback func()
