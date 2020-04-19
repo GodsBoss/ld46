@@ -1,20 +1,25 @@
 package yic
 
-type building interface {
-	gridXY() vector2D
-	typ() string
+type building struct {
+	typ    string
+	gridXY vector2D
+	x      int
+	y      int
+	effect buildingEffect
 }
+
+type buildingEffect interface{}
 
 type placeBuilding interface {
 	cost() float64
 	fieldTypes() map[int]struct{}
-	building(pos vector2D) building
+	building(pos vector2D) *building
 }
 
 type simplePlaceBuilding struct {
 	cst         float64
 	fldTypes    map[int]struct{}
-	newBuilding func(pos vector2D) building
+	newBuilding func(pos vector2D) *building
 }
 
 func (pb *simplePlaceBuilding) cost() float64 {
@@ -25,7 +30,7 @@ func (pb *simplePlaceBuilding) fieldTypes() map[int]struct{} {
 	return pb.fldTypes
 }
 
-func (pb *simplePlaceBuilding) building(pos vector2D) building {
+func (pb *simplePlaceBuilding) building(pos vector2D) *building {
 	return pb.newBuilding(pos)
 }
 
@@ -37,9 +42,11 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 		fldTypes: map[int]struct{}{
 			fieldBuildSpot: struct{}{},
 		},
-		newBuilding: func(pos vector2D) building {
-			return &incomeBuilding{
-				pos: pos,
+		newBuilding: func(pos vector2D) *building {
+			return &building{
+				typ:    "building_income",
+				gridXY: pos,
+				effect: &incomeBuildingEffect{},
 			}
 		},
 	},

@@ -1,6 +1,7 @@
 package yic
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/GodsBoss/ld46/pkg/engine"
@@ -18,11 +19,11 @@ type playing struct {
 	resources       float64
 	incomePerSecond float64
 	gridCursor      vector2D
-	buildings       map[vector2D]building
+	buildings       map[vector2D]*building
 }
 
 func (p *playing) Init() {
-	p.buildings = make(map[vector2D]building)
+	p.buildings = make(map[vector2D]*building)
 	p.phase = 1
 	p.resources = startResources
 	p.calculateIncomePerSecond()
@@ -85,10 +86,11 @@ func (p *playing) Tick(ms int) *engine.Transition {
 func (p *playing) calculateIncomePerSecond() {
 	p.incomePerSecond = baseResourcesPerSecondPerPhase[p.phase]
 	for v := range p.buildings {
-		if provider, ok := p.buildings[v].(incomeProviderBuilding); ok {
+		if provider, ok := p.buildings[v].effect.(incomeProviderBuilding); ok {
 			p.incomePerSecond += provider.IncomePerSecond()
 		}
 	}
+	fmt.Printf("income is now %f\n", p.incomePerSecond)
 }
 
 type incomeProviderBuilding interface {
@@ -125,6 +127,9 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 
 		// Finally, build building.
 		p.buildings[p.gridCursor] = placeBuilding.building(p.gridCursor)
+		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(p.gridCursor.X), float64(p.gridCursor.Y))
+		p.buildings[p.gridCursor].x = int(x)
+		p.buildings[p.gridCursor].y = int(y)
 		p.resources -= placeBuilding.cost()
 		return nil
 	}
@@ -180,13 +185,12 @@ func (p *playing) Objects() map[string][]engine.Object {
 	}
 
 	for v := range p.buildings {
-		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(v.X), float64(v.Y))
 		objects["entities"] = append(
 			objects["entities"],
 			engine.Object{
-				Key: p.buildings[v].typ(),
-				X:   int(x),
-				Y:   int(y),
+				Key: p.buildings[v].typ,
+				X:   p.buildings[v].x,
+				Y:   p.buildings[v].y,
 			},
 		)
 	}
