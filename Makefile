@@ -1,4 +1,4 @@
-all: dist/main.wasm dist/wasm_exec.js dist/index.html dist/gfx.png
+all: dist/main.wasm dist/wasm_exec.js dist/index.html dist/gfx.png dist/.htaccess
 
 dist/main.wasm: Makefile
 	GOOS=js GOARCH=wasm go build -o $@
@@ -11,6 +11,9 @@ dist/index.html: static/index.html
 
 dist/gfx.png: gfx/gfx.xcf Makefile gfx/gfx.sh
 	gfx/gfx.sh $< $@
+
+dist/.htaccess: static/.htaccess
+	cp $< $@
 
 dist:
 	mkdir -p dist
