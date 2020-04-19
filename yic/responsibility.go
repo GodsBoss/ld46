@@ -14,10 +14,11 @@ type responsibilities struct {
 	spawnBuffer        float64
 	spawnSpeed         float64
 	spawnSpeedIncrease float64
-	spawnLife          float64
 	spawnType          string
-	spawnReward        float64
 	enemiesKilled      int
+	wave               int
+
+	defaultTemplate *responsibilityTemplate
 }
 
 func (resps *responsibilities) Init() {
@@ -28,9 +29,18 @@ func (resps *responsibilities) Init() {
 
 	resps.spawnSpeedIncrease = 0.05
 	resps.spawnSpeed = initialSpawnSpeed
-	resps.spawnLife = initialSpawnLife
 	resps.spawnType = responsibilityType1
-	resps.spawnReward = initialSpawnReward
+
+	resps.defaultTemplate = &responsibilityTemplate{
+		baseLife:    250.0,
+		lifePerWave: 50.0,
+
+		baseSpeed:           0.5,
+		potentialSpeedBoost: 0.5,
+
+		baseReward:    25.0,
+		rewardPerWave: 5.0,
+	}
 
 	resps.enemiesKilled = 0
 }
@@ -95,26 +105,17 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 	// Spawn new resps.
 	resps.spawnSpeed += resps.spawnSpeedIncrease * factor
 	if resps.spawnSpeed > spawnSpeedThreshold {
+		resps.wave++
 		resps.spawnSpeed = initialSpawnSpeed
-		resps.spawnLife += spawnLifeIncrease
 		resps.spawnType = nextSpawnType[resps.spawnType]
-		resps.spawnReward += spawnRewardIncrease
 	}
 	resps.spawnBuffer += resps.spawnSpeed * factor
 	if resps.spawnBuffer > 1.0 {
 		chainIndex := rand.Intn(len(resps.byChain))
 		x, y, _ := resps.p.levels.ChosenLevel().responsibilityPosition(chainIndex, 0)
-		resps.byChain[chainIndex] = append(
-			resps.byChain[chainIndex],
-			&responsibility{
-				typ:    resps.spawnType,
-				life:   resps.spawnLife,
-				speed:  0.5 + 0.5*rand.Float64(),
-				reward: resps.spawnReward,
-				x:      x,
-				y:      y,
-			},
-		)
+		resp := resps.defaultTemplate.responsibilityByWave(resps.wave, x, y)
+		resp.typ = resps.spawnType
+		resps.byChain[chainIndex] = append(resps.byChain[chainIndex], resp)
 		resps.spawnBuffer -= 1.0
 	}
 
@@ -160,6 +161,27 @@ type responsibility struct {
 
 func (r *responsibility) receiveDamage(dmg float64) {
 	r.life -= dmg
+}
+
+type responsibilityTemplate struct {
+	baseLife    float64
+	lifePerWave float64
+
+	baseSpeed           float64
+	potentialSpeedBoost float64
+
+	baseReward    float64
+	rewardPerWave float64
+}
+
+func (tmpl *responsibilityTemplate) responsibilityByWave(wave int, x, y float64) *responsibility {
+	return &responsibility{
+		life:   tmpl.baseLife + (float64(wave))*tmpl.lifePerWave,
+		speed:  tmpl.baseSpeed + tmpl.potentialSpeedBoost*rand.Float64(),
+		reward: tmpl.baseReward + (float64(wave))*tmpl.rewardPerWave,
+		x:      x,
+		y:      y,
+	}
 }
 
 const (
