@@ -11,6 +11,8 @@ type playing struct {
 
 	head *head
 
+	fxManager *fxManager
+
 	responsibilites *responsibilities
 	phase           int
 	resources       float64
@@ -20,6 +22,7 @@ type playing struct {
 }
 
 func (p *playing) Init() {
+	p.fxManager = newFXManager()
 	p.head = &head{
 		p: p,
 	}
@@ -40,6 +43,7 @@ func (p *playing) Tick(ms int) *engine.Transition {
 	for v := range p.buildings {
 		p.buildings[v].Tick(ms)
 	}
+	p.fxManager.Tick(ms)
 	return p.head.Tick(ms)
 }
 
@@ -125,6 +129,7 @@ func (p *playing) Objects() map[string][]engine.Object {
 				Animation: p.head.animation,
 			},
 		},
+		"fx": p.fxManager.Objects(),
 	}
 
 	for row := range lvl.fields {
