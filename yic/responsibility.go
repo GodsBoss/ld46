@@ -17,6 +17,7 @@ type responsibilities struct {
 	spawnLife          float64
 	spawnType          string
 	spawnReward        float64
+	enemiesKilled      int
 }
 
 func (resps *responsibilities) Init() {
@@ -30,6 +31,8 @@ func (resps *responsibilities) Init() {
 	resps.spawnLife = initialSpawnLife
 	resps.spawnType = responsibilityType1
 	resps.spawnReward = initialSpawnReward
+
+	resps.enemiesKilled = 0
 }
 
 func (resps *responsibilities) Tick(ms int) *engine.Transition {
@@ -56,6 +59,7 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 					remaining = append(remaining, resps.byChain[chainIndex][i])
 				} else {
 					resps.p.resources += resps.byChain[chainIndex][i].reward
+					resps.enemiesKilled++
 				}
 			}
 			resps.byChain[chainIndex] = remaining
