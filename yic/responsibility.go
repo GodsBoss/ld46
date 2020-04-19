@@ -20,6 +20,8 @@ type responsibilities struct {
 
 	defaultTemplate *responsibilityTemplate
 	templates       map[string]*responsibilityTemplate
+
+	zOffset int
 }
 
 func (resps *responsibilities) Init() {
@@ -163,6 +165,8 @@ func (resps *responsibilities) Tick(ms int) *engine.Transition {
 		}
 		resp := tmpl.responsibilityByWave(resps.wave, x, y)
 		resp.typ = resps.spawnType
+		resp.zOffset = resps.zOffset
+		resps.zOffset = (resps.zOffset + 1) % 1000
 		resps.byChain[chainIndex] = append(resps.byChain[chainIndex], resp)
 		resps.spawnBuffer -= 1.0
 	}
@@ -180,7 +184,7 @@ func (resps *responsibilities) Objects() []engine.Object {
 					Key:       resps.byChain[chainIndex][i].typ,
 					X:         int(resps.byChain[chainIndex][i].x),
 					Y:         int(resps.byChain[chainIndex][i].y),
-					Z:         int(resps.byChain[chainIndex][i].y * 1000.0),
+					Z:         int(resps.byChain[chainIndex][i].y*1000.0) + resps.byChain[chainIndex][i].zOffset,
 					Animation: resps.byChain[chainIndex][i].animation,
 				},
 			)
@@ -205,6 +209,8 @@ type responsibility struct {
 	reward float64
 
 	animation float64
+
+	zOffset int
 }
 
 func (r *responsibility) receiveDamage(dmg float64) {
