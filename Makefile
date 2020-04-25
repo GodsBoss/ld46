@@ -24,8 +24,12 @@ clean:
 serve: all
 	SERVE_DIR=$${PWD}/dist go run ./serve
 
+test:
+	go test -v -cover ./pkg/vector/v2d
+
 .PHONY: \
 	all \
 	clean \
 	dist/main.wasm \
-	serve
+	serve \
+	test
