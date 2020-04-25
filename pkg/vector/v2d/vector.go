@@ -59,6 +59,16 @@ func Scale(v Vector, factor float64) Vector {
 	}
 }
 
+func Abs(v Vector) Vector {
+	if v.x < 0 {
+		v.x = -v.x
+	}
+	if v.y < 0 {
+		v.y = -v.y
+	}
+	return v
+}
+
 func Length(v Vector) float64 {
 	return math.Sqrt(v.x*v.x + v.y*v.y)
 }

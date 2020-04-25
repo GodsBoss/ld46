@@ -15,6 +15,8 @@ func TestVector(t *testing.T) {
 	assertEqual(t, "v", -17.0, 5.0, v2d.FromXY(-17.0, 5.0))
 	assertEqual(t, "scaled", 3.0, -6.0, v2d.Scale(v2d.FromXY(-1.0, 2.0), -3.0))
 	assertEqual(t, "sum", -3.0, 4.0, v2d.Sum(v2d.UnitX(), v2d.UnitY(), v2d.FromXY(-4.0, 3.0), v2d.Zero()))
+	assertEqual(t, "abs_pos", 2.0, 7.0, v2d.Abs(v2d.FromXY(2.0, 7.0)))
+	assertEqual(t, "abs_neg", 3.0, 6.0, v2d.Abs(v2d.FromXY(-3.0, -6.0)))
 }
 
 func TestLength(t *testing.T) {
