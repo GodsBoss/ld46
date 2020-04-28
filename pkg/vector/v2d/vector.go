@@ -2,6 +2,7 @@ package v2d
 
 import (
 	"math"
+	"strconv"
 )
 
 type Vector struct {
@@ -42,6 +43,10 @@ func (v Vector) Y() float64 {
 
 func (v Vector) XY() (float64, float64) {
 	return v.x, v.y
+}
+
+func (v Vector) String() string {
+	return "(" + strconv.FormatFloat(v.x, 'G', -1, 64) + ", " + strconv.FormatFloat(v.y, 'G', -1, 64) + ")"
 }
 
 func Sum(vs ...Vector) Vector {

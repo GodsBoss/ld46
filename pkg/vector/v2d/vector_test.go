@@ -29,18 +29,14 @@ func TestLength(t *testing.T) {
 
 func assertEqual(t *testing.T, name string, x, y float64, actual v2d.Vector) {
 	if x != actual.X() || y != actual.Y() {
-		t.Errorf("expected %s to be %s, but got %s.", name, formatXY(x, y), formatVector(actual))
+		t.Errorf("expected %s to be %s, but got %s.", name, formatXY(x, y), actual)
 	}
 	actualX, actualY := actual.XY()
 	if x != actualX || y != actualY {
-		t.Errorf("expected %s to be %s, but got %s.", name, formatXY(x, y), formatVector(actual))
+		t.Errorf("expected %s to be %s, but got %s.", name, formatXY(x, y), actual)
 	}
 }
 
 func formatXY(x, y float64) string {
 	return fmt.Sprintf("(%f, %f)", x, y)
-}
-
-func formatVector(v v2d.Vector) string {
-	return formatXY(v.X(), v.Y())
 }
