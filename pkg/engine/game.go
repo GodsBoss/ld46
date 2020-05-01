@@ -81,5 +81,8 @@ type Object struct {
 	// works if above or below this interval.
 	Animation float64
 
+	// SmoothPosition is a flag to let objects break out from the fixed pixel grid.
+	SmoothPosition bool
+
 	Scale int
 }

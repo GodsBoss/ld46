@@ -62,14 +62,22 @@ func (renderer *Renderer) drawObject(dest *dom.Context2D, object engine.Object) 
 	if object.Scale > 1 {
 		scale = object.Scale
 	}
+	var x, y int
+	if object.SmoothPosition {
+		x = int(object.X * float64(renderer.zoom()))
+		y = int(object.Y * float64(renderer.zoom()))
+	} else {
+		x = int(object.X) * renderer.zoom()
+		y = int(object.Y) * renderer.zoom()
+	}
 	dest.DrawImage(
 		renderer.GFXSource,
 		sprite.X+sprite.W*frame,
 		sprite.Y,
 		sprite.W,
 		sprite.H,
-		int(object.X)*renderer.zoom(),
-		int(object.Y)*renderer.zoom(),
+		x,
+		y,
 		sprite.W*renderer.zoom()*scale,
 		sprite.H*renderer.zoom()*scale,
 	)
