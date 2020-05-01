@@ -123,3 +123,19 @@ func (f Field) Column() int {
 func (f Field) Row() int {
 	return f.row
 }
+
+func (f Field) Left() Field {
+	return CreateField(f.column-1, f.row)
+}
+
+func (f Field) Right() Field {
+	return CreateField(f.column+1, f.row)
+}
+
+func (f Field) Up() Field {
+	return CreateField(f.column, f.row-1)
+}
+
+func (f Field) Down() Field {
+	return CreateField(f.column, f.row+1)
+}
