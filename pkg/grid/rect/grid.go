@@ -109,6 +109,7 @@ type Field struct {
 	row    int
 }
 
+// CreateField creates a field point to (column, row).
 func CreateField(column, row int) Field {
 	return Field{
 		column: column,
@@ -116,18 +117,26 @@ func CreateField(column, row int) Field {
 	}
 }
 
+// Column returns the field's column.
 func (f Field) Column() int {
 	return f.column
 }
 
+// Row returns the field's row.
 func (f Field) Row() int {
 	return f.row
 }
 
+// FieldOffset is an offset for fields, e.g. a linear translation.
 type FieldOffset interface {
+	// Apply applies this offset to a field, resulting in a new field. The old field
+	// remains unchanged.
 	Apply(Field) Field
 }
 
+// FieldOffsetFromField converts a field to a corresponding offset, meaning its
+// column is used as the horizontal part of the offset, while the row is used as
+// the vertical part.
 func FieldOffsetFromField(f Field) FieldOffset {
 	return fieldFieldOffset(f)
 }
@@ -142,18 +151,22 @@ func (offset fieldFieldOffset) Apply(f Field) Field {
 
 var _ FieldOffset = fieldFieldOffset{}
 
+// FieldOffsetLeft returns an offset which takes the field left to the given field.
 func FieldOffsetLeft() FieldOffset {
 	return FieldOffsetFromField(CreateField(-1, 0))
 }
 
+// FieldOffsetRight returns an offset which takes the field right to the given field.
 func FieldOffsetRight() FieldOffset {
 	return FieldOffsetFromField(CreateField(1, 0))
 }
 
+// FieldOffsetUp returns an offset which takes the field above the given field.
 func FieldOffsetUp() FieldOffset {
 	return FieldOffsetFromField(CreateField(0, -1))
 }
 
+// FieldOffsetDown returns an offset which takes the field below the given field.
 func FieldOffsetDown() FieldOffset {
 	return FieldOffsetFromField(CreateField(0, 1))
 }
