@@ -25,7 +25,9 @@ serve: all
 	SERVE_DIR=$${PWD}/dist go run ./serve
 
 test:
-	go test -v -cover ./pkg/vector/v2d
+	go test -v -cover \
+		./pkg/grid/rect \
+		./pkg/vector/v2d
 
 .PHONY: \
 	all \
