@@ -186,3 +186,52 @@ func TestOffsets(t *testing.T) {
 		)
 	}
 }
+
+func TestCoordinatesFromField(t *testing.T) {
+	testCases := map[string]struct {
+		fieldSize      v2d.Vector
+		offset         v2d.Vector
+		field          rect.Field
+		expectedCoords v2d.Vector
+	}{
+		"zero_field_size_zero_offset": {
+			field:          rect.CreateField(7, 18),
+			expectedCoords: v2d.FromXY(0, 0),
+		},
+		"zero_field_size_with_offset": {
+			offset:         v2d.FromXY(7.5, -2.125),
+			field:          rect.CreateField(-100, 50),
+			expectedCoords: v2d.FromXY(7.5, -2.125),
+		},
+		"with_field_size_zero_offset": {
+			fieldSize:      v2d.FromXY(2.5, 7.5),
+			field:          rect.CreateField(-4, 3),
+			expectedCoords: v2d.FromXY(-10, 22.5),
+		},
+		"with_field_size_with_offset": {
+			fieldSize:      v2d.FromXY(1.25, 8.5),
+			offset:         v2d.FromXY(8.5, -20.125),
+			field:          rect.CreateField(-5, 3),
+			expectedCoords: v2d.FromXY(2.25, 5.375),
+		},
+	}
+
+	for name, testCase := range testCases {
+		t.Run(
+			name,
+			func(t *testing.T) {
+				g := &rect.Grid{}
+				g.Set(
+					rect.FieldSize(testCase.fieldSize),
+					rect.Offset(testCase.offset),
+				)
+				v := g.CoordinatesFromField(testCase.field)
+				if v2d.Length(v2d.Sum(testCase.expectedCoords, v2d.Scale(v, -1))) > float64compareThreshold {
+					t.Errorf("expected coordinates to be %s, but got %s", testCase.expectedCoords, v)
+				}
+			},
+		)
+	}
+}
+
+const float64compareThreshold = 0.000005

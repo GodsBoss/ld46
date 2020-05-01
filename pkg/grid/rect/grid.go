@@ -102,6 +102,16 @@ func (grid *Grid) FieldFromCoordinates(pos v2d.Vector) (*Field, error) {
 	}, nil
 }
 
+// CoordinatesFromField takes a field and returns the corresponding coordinates of the top left corner
+// as a vector. Unlike FieldFromCoordinates, CoordinatesFromField works on grids with zero field size,
+// it is just not useful because all grid points have the same coordinates: (0, 0).
+func (grid *Grid) CoordinatesFromField(field Field) v2d.Vector {
+	return v2d.FromXY(
+		grid.fieldSize.X()*float64(field.Column())+grid.offset.X(),
+		grid.fieldSize.Y()*float64(field.Row())+grid.offset.Y(),
+	)
+}
+
 // Field is a single field of a grid, identified by column and row. Fields are value objects, i.e. they never change.
 // Fields can safely be used as map keys.
 type Field struct {
