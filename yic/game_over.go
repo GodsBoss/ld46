@@ -72,10 +72,11 @@ func (g *gameOver) Objects() map[string][]engine.Object {
 		objects["entities"] = append(
 			objects["entities"],
 			engine.Object{
-				Key:       g.types[i],
-				X:         adultHeadX + 8 + gameOverItemsDistance*math.Sin(angle),
-				Y:         adultHeadY + 8 + gameOverItemsDistance*math.Cos(angle),
-				Animation: g.adultHeadAnimation,
+				Key:            g.types[i],
+				X:              adultHeadX + 8 + gameOverItemsDistance*math.Sin(angle),
+				Y:              adultHeadY + 8 + gameOverItemsDistance*math.Cos(angle),
+				Animation:      g.adultHeadAnimation,
+				SmoothPosition: true,
 			},
 		)
 	}

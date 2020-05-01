@@ -181,11 +181,12 @@ func (resps *responsibilities) Objects() []engine.Object {
 			objects = append(
 				objects,
 				engine.Object{
-					Key:       resps.byChain[chainIndex][i].typ,
-					X:         resps.byChain[chainIndex][i].x,
-					Y:         resps.byChain[chainIndex][i].y,
-					Z:         int(resps.byChain[chainIndex][i].y*1000.0) + resps.byChain[chainIndex][i].zOffset,
-					Animation: resps.byChain[chainIndex][i].animation,
+					Key:            resps.byChain[chainIndex][i].typ,
+					X:              resps.byChain[chainIndex][i].x,
+					Y:              resps.byChain[chainIndex][i].y,
+					Z:              int(resps.byChain[chainIndex][i].y*1000.0) + resps.byChain[chainIndex][i].zOffset,
+					Animation:      resps.byChain[chainIndex][i].animation,
+					SmoothPosition: true,
 				},
 			)
 		}
