@@ -124,18 +124,36 @@ func (f Field) Row() int {
 	return f.row
 }
 
-func (f Field) Left() Field {
-	return CreateField(f.column-1, f.row)
+type FieldOffset interface {
+	Apply(Field) Field
 }
 
-func (f Field) Right() Field {
-	return CreateField(f.column+1, f.row)
+func FieldOffsetFromField(f Field) FieldOffset {
+	return fieldFieldOffset(f)
 }
 
-func (f Field) Up() Field {
-	return CreateField(f.column, f.row-1)
+type fieldFieldOffset Field
+
+func (offset fieldFieldOffset) Apply(f Field) Field {
+	f.column += offset.column
+	f.row += offset.row
+	return f
 }
 
-func (f Field) Down() Field {
-	return CreateField(f.column, f.row+1)
+var _ FieldOffset = fieldFieldOffset{}
+
+func FieldOffsetLeft() FieldOffset {
+	return FieldOffsetFromField(CreateField(-1, 0))
+}
+
+func FieldOffsetRight() FieldOffset {
+	return FieldOffsetFromField(CreateField(1, 0))
+}
+
+func FieldOffsetUp() FieldOffset {
+	return FieldOffsetFromField(CreateField(0, -1))
+}
+
+func FieldOffsetDown() FieldOffset {
+	return FieldOffsetFromField(CreateField(0, 1))
 }

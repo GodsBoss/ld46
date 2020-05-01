@@ -131,3 +131,58 @@ func TestGridFieldFromCoordinates(t *testing.T) {
 		)
 	}
 }
+
+func TestOffsets(t *testing.T) {
+	testCases := map[string]struct {
+		startField     rect.Field
+		offset         rect.FieldOffset
+		expectedColumn int
+		expectedRow    int
+	}{
+		"left": {
+			startField:     rect.CreateField(3, 1),
+			offset:         rect.FieldOffsetLeft(),
+			expectedColumn: 2,
+			expectedRow:    1,
+		},
+		"right": {
+			startField:     rect.CreateField(8, -2),
+			offset:         rect.FieldOffsetRight(),
+			expectedColumn: 9,
+			expectedRow:    -2,
+		},
+		"up": {
+			startField:     rect.CreateField(-5, 3),
+			offset:         rect.FieldOffsetUp(),
+			expectedColumn: -5,
+			expectedRow:    2,
+		},
+		"down": {
+			startField:     rect.CreateField(4, 3),
+			offset:         rect.FieldOffsetDown(),
+			expectedColumn: 4,
+			expectedRow:    4,
+		},
+		"-2,+5": {
+			startField:     rect.CreateField(3, -2),
+			offset:         rect.FieldOffsetFromField(rect.CreateField(-2, 5)),
+			expectedColumn: 1,
+			expectedRow:    3,
+		},
+	}
+
+	for name, testCase := range testCases {
+		t.Run(
+			name,
+			func(t *testing.T) {
+				resultField := testCase.offset.Apply(testCase.startField)
+				if resultField.Column() != testCase.expectedColumn {
+					t.Errorf("expected column %d, but got %d", testCase.expectedColumn, resultField.Column())
+				}
+				if resultField.Row() != testCase.expectedRow {
+					t.Errorf("expected row %d, but got %d", testCase.expectedRow, resultField.Row())
+				}
+			},
+		)
+	}
+}
