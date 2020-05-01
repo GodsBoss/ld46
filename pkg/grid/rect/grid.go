@@ -106,9 +106,17 @@ func (grid *Grid) FieldFromCoordinates(pos v2d.Vector) (*Field, error) {
 // as a vector. Unlike FieldFromCoordinates, CoordinatesFromField works on grids with zero field size,
 // it is just not useful because all grid points have the same coordinates: (0, 0).
 func (grid *Grid) CoordinatesFromField(field Field) v2d.Vector {
+	return grid.CoordinatesFromGridCoordinates(
+		v2d.FromXY(float64(field.Column()), float64(field.Row())),
+	)
+}
+
+// CoordinatesFromGridCoordinates is basically the same as CoordinatesFromField,
+// but allows for non-integer "fields", e.g. the position of column 1.5 and row -0.75.
+func (grid *Grid) CoordinatesFromGridCoordinates(field v2d.Vector) v2d.Vector {
 	return v2d.FromXY(
-		grid.fieldSize.X()*float64(field.Column())+grid.offset.X(),
-		grid.fieldSize.Y()*float64(field.Row())+grid.offset.Y(),
+		grid.fieldSize.X()*field.X()+grid.offset.X(),
+		grid.fieldSize.Y()*field.Y()+grid.offset.Y(),
 	)
 }
 
