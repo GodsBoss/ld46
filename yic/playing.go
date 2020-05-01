@@ -4,6 +4,8 @@ import (
 	"strconv"
 
 	"github.com/GodsBoss/ld46/pkg/engine"
+	"github.com/GodsBoss/ld46/pkg/grid/rect"
+	"github.com/GodsBoss/ld46/pkg/vector/v2d"
 )
 
 const playingStateID = "playing"
@@ -21,8 +23,8 @@ type playing struct {
 	phase           int
 	resources       float64
 	incomePerSecond float64
-	gridCursor      vector2D
-	buildings       map[vector2D]*building
+	gridCursor      rect.Field
+	buildings       map[rect.Field]*building
 }
 
 func (p *playing) Init() {
@@ -33,7 +35,7 @@ func (p *playing) Init() {
 		p: p,
 	}
 	p.head.Init()
-	p.buildings = make(map[vector2D]*building)
+	p.buildings = make(map[rect.Field]*building)
 	p.resources = startResources
 	p.calculateIncomePerSecond()
 	p.responsibilites = &responsibilities{
@@ -99,11 +101,11 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 		lvl := p.levels.ChosenLevel()
 
 		// Far from any field.
-		if !lvl.isOnGrid(p.gridCursor.X, p.gridCursor.Y) {
+		if !lvl.grid.Contains(p.gridCursor) {
 			return nil
 		}
 		// Field type not matching.
-		if _, ok := placeBuilding.fieldTypes()[lvl.fields[p.gridCursor.Y][p.gridCursor.X].typ]; !ok {
+		if _, ok := placeBuilding.fieldTypes()[lvl.fields[p.gridCursor.Row()][p.gridCursor.Column()].typ]; !ok {
 			return nil
 		}
 		// Field already contains building.
@@ -113,7 +115,7 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 
 		// Finally, build building.
 		p.buildings[p.gridCursor] = placeBuilding.building(p, p.gridCursor)
-		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(p.gridCursor.X), float64(p.gridCursor.Y))
+		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(p.gridCursor.Column()), float64(p.gridCursor.Row()))
 		p.buildings[p.gridCursor].x = int(x)
 		p.buildings[p.gridCursor].y = int(y)
 		p.resources -= placeBuilding.cost()
@@ -190,10 +192,10 @@ func (p *playing) Objects() map[string][]engine.Object {
 
 	objects["entities"] = append(objects["entities"], p.responsibilites.Objects()...)
 
-	if p.levels.ChosenLevel().isOnGrid(p.gridCursor.X, p.gridCursor.Y) {
-		cx, cy := lvl.realCoordinate(p.gridCursor.X, p.gridCursor.Y)
+	if p.levels.ChosenLevel().isOnGrid(p.gridCursor.Column(), p.gridCursor.Row()) {
+		cx, cy := lvl.realCoordinate(p.gridCursor.Column(), p.gridCursor.Row())
 		key := "grid_cursor_no"
-		if p.levels.ChosenLevel().fields[p.gridCursor.Y][p.gridCursor.X].typ == fieldBuildSpot {
+		if p.levels.ChosenLevel().fields[p.gridCursor.Row()][p.gridCursor.Column()].typ == fieldBuildSpot {
 			key = "grid_cursor"
 			if p.buildings[p.gridCursor] == nil {
 				key = "grid_cursor_yes"
@@ -218,10 +220,7 @@ var fieldTypeSpriteKeyMapping = map[int]string{
 	fieldBuildSpot: "field_buildspot",
 }
 
-var fieldSize = vector2D{
-	X: 18,
-	Y: 18,
-}
+var fieldSize = v2d.FromXY(18, 18)
 
 const startResources = 2000.0
 

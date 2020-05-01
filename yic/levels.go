@@ -1,6 +1,9 @@
 package yic
 
 import (
+	"github.com/GodsBoss/ld46/pkg/grid/rect"
+	"github.com/GodsBoss/ld46/pkg/vector/v2d"
+
 	"strings"
 )
 
@@ -20,21 +23,22 @@ type level struct {
 	headX int
 	headY int
 
+	grid rect.Grid
+
 	fields [][]field
 
 	chains []*chain
 }
 
 func (lvl *level) realCoordinate(col, row int) (int, int) {
-	x := col*fieldSize.X + 200 - lvl.width*fieldSize.X/2
-	y := row*fieldSize.Y + 150 - lvl.height*fieldSize.Y/2
-	return x, y
+	x, y := lvl.realCoordinateFloat64(float64(col), float64(row))
+	return int(x), int(y)
 }
 
+// realCoordinateFloat64 takes a grid coordinate and converts it into (pseudo) pixel coordinates.
 func (lvl level) realCoordinateFloat64(gridX, gridY float64) (float64, float64) {
-	x := gridX*float64(fieldSize.X) + float64(200-lvl.width*fieldSize.X/2)
-	y := gridY*float64(fieldSize.Y) + float64(150-lvl.height*fieldSize.Y/2)
-	return x, y
+	v := lvl.grid.CoordinatesFromGridCoordinates(v2d.FromXY(gridX, gridY))
+	return v.X(), v.Y()
 }
 
 func (lvl level) responsibilityPosition(chainIndex int, pos float64) (float64, float64, bool) {
@@ -43,15 +47,14 @@ func (lvl level) responsibilityPosition(chainIndex int, pos float64) (float64, f
 	return rx, ry, endReached
 }
 
-func (lvl level) gridCursor(mouseX, mouseY int) vector2D {
-	return vector2D{
-		X: (mouseX - 200 + lvl.width*fieldSize.X/2) / fieldSize.X,
-		Y: (mouseY - 150 + lvl.height*fieldSize.Y/2) / fieldSize.Y,
-	}
+func (lvl level) gridCursor(mouseX, mouseY int) rect.Field {
+	// TODO: Error handling!
+	f, _ := lvl.grid.FieldFromCoordinates(v2d.FromXY(float64(mouseX), float64(mouseY)))
+	return *f
 }
 
 func (lvl level) isOnGrid(x, y int) bool {
-	return x >= 0 && y >= 0 && x < lvl.width && y < lvl.height
+	return lvl.grid.Contains(rect.CreateField(x, y))
 }
 
 type field struct {
@@ -78,12 +81,13 @@ func createLevels() *levels {
 }
 
 func parseLevel(input string) level {
+	grid := &rect.Grid{}
 	fields := make([][]field, 0)
 	lines := strings.Split(input, "\n")
 	width := 0
 	foundHead := false
 	headX, headY := 0, 0
-	waypoints := map[vector2D]*waypoint{}
+	waypoints := map[rect.Field]*waypoint{}
 	for i := range lines {
 
 		// Skip empty lines
@@ -98,10 +102,7 @@ func parseLevel(input string) level {
 		y := len(fields)
 		currentRow := make([]field, len(lines[i]))
 		for x := range lines[i] {
-			position := vector2D{
-				X: x,
-				Y: y,
-			}
+			position := rect.CreateField(x, y)
 			currentRow[x].typ = fieldBuildSpot
 			switch lines[i][x] {
 			case 'X':
@@ -117,7 +118,7 @@ func parseLevel(input string) level {
 				waypoints[position] = &waypoint{
 					position:  position,
 					direction: waypointDirections[lines[i][x]],
-					previous:  make([]vector2D, 0),
+					previous:  make([]rect.Field, 0),
 				}
 			}
 		}
@@ -131,18 +132,26 @@ func parseLevel(input string) level {
 		panic("head out of bounds")
 	}
 
+	grid.Set(
+		rect.Size(width, height),
+		rect.FieldSize(fieldSize),
+		rect.Offset(
+			v2d.FromXY(
+				200.0-float64(width)*fieldSize.X()/2.0,
+				150.0-float64(height)*fieldSize.Y()/2.0,
+			),
+		),
+	)
+
 	// Head is 2x2, all fields are head fields and waypoints.
 	for dx := 0; dx <= 1; dx++ {
 		for dy := 0; dy <= 1; dy++ {
-			headpos := vector2D{
-				X: headX + dx,
-				Y: headY + dy,
-			}
+			headpos := rect.CreateField(headX+dx, headY+dy)
 			waypoints[headpos] = &waypoint{
 				position: headpos,
 				isHead:   true,
 			}
-			fields[headpos.Y][headpos.X].typ = fieldHead
+			fields[headpos.Row()][headpos.Column()].typ = fieldHead
 		}
 	}
 
@@ -161,10 +170,10 @@ func parseLevel(input string) level {
 		}
 		currentPos := v
 		for {
-			currentPos = addVector2Ds(currentPos, waypoints[v].direction)
+			currentPos = waypoints[v].direction.Apply(currentPos)
 
 			// We left the level, input is invalid.
-			if currentPos.X < 0 || currentPos.Y < 0 || currentPos.X >= width || currentPos.Y >= height {
+			if !grid.Contains(rect.CreateField(currentPos.Column(), currentPos.Row())) {
 				panic(waypoints)
 			}
 
@@ -176,7 +185,7 @@ func parseLevel(input string) level {
 			}
 
 			// Every field we visit (which is not already a way) will be converted into a way field.
-			fields[currentPos.Y][currentPos.X].typ = fieldWay
+			fields[currentPos.Row()][currentPos.Column()].typ = fieldWay
 		}
 	}
 
@@ -184,10 +193,7 @@ func parseLevel(input string) level {
 	deletedHeadWayPoints := 0
 	for dx := 0; dx <= 1; dx++ {
 		for dy := 0; dy <= 1; dy++ {
-			headpos := vector2D{
-				X: headX + dx,
-				Y: headY + dy,
-			}
+			headpos := rect.CreateField(headX+dx, headY+dy)
 			if len(waypoints[headpos].previous) == 0 {
 				delete(waypoints, headpos)
 				deletedHeadWayPoints++
@@ -200,7 +206,7 @@ func parseLevel(input string) level {
 		panic("head cannot be reached, input invalid")
 	}
 
-	startingWaypoints := map[vector2D]*waypoint{}
+	startingWaypoints := map[rect.Field]*waypoint{}
 
 	for v := range waypoints {
 		if len(waypoints[v].previous) == 0 {
@@ -242,24 +248,25 @@ func parseLevel(input string) level {
 		headX:  headX,
 		headY:  headY,
 		fields: fields,
+		grid:   *grid,
 	}
 }
 
 type waypoint struct {
-	position  vector2D
-	direction vector2D
+	position  rect.Field
+	direction rect.FieldOffset
 	next      *waypoint
-	previous  []vector2D
+	previous  []rect.Field
 
 	// isHead means this is a final waypoint. It may not be part of a chain. In this case it will be removed in the end.
 	isHead bool
 }
 
-var waypointDirections = map[byte]vector2D{
-	'^': directionUp,
-	'v': directionDown,
-	'<': directionLeft,
-	'>': directionRight,
+var waypointDirections = map[byte]rect.FieldOffset{
+	'^': rect.FieldOffsetUp(),
+	'v': rect.FieldOffsetDown(),
+	'<': rect.FieldOffsetLeft(),
+	'>': rect.FieldOffsetRight(),
 }
 
 type chain struct {
@@ -298,7 +305,15 @@ type segment struct {
 }
 
 func (s segment) length() int {
-	return addVector2Ds(s.end.position, s.start.position.scale(-1)).abs().sum()
+	dc := s.end.position.Column() - s.start.position.Column()
+	dr := s.end.position.Row() - s.start.position.Row()
+	if dc < 0 {
+		dc = -dc
+	}
+	if dr < 0 {
+		dr = -dr
+	}
+	return dc + dr
 }
 
 // responsibilityPosition calculates the grid position of a responsibility in
@@ -310,7 +325,8 @@ func (s segment) responsibilityPosition(pos float64) (float64, float64) {
 	if pos > float64(s.length()) {
 		pos = float64(s.length())
 	}
-	x := float64(s.start.position.X) + float64(s.start.direction.X)*pos
-	y := float64(s.start.position.Y) + float64(s.start.direction.Y)*pos
+	progress := s.start.direction.Apply(rect.Field{})
+	x := float64(s.start.position.Column()) + float64(progress.Column())*pos
+	y := float64(s.start.position.Row()) + float64(progress.Row())*pos
 	return x, y
 }

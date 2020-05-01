@@ -2,11 +2,12 @@ package yic
 
 import (
 	"github.com/GodsBoss/ld46/pkg/engine"
+	"github.com/GodsBoss/ld46/pkg/grid/rect"
 )
 
 type building struct {
 	typ       string
-	gridXY    vector2D
+	gridXY    rect.Field
 	x         int
 	y         int
 	effect    buildingEffect
@@ -23,13 +24,13 @@ type buildingEffect interface{}
 type placeBuilding interface {
 	cost() float64
 	fieldTypes() map[int]struct{}
-	building(p *playing, pos vector2D) *building
+	building(p *playing, pos rect.Field) *building
 }
 
 type simplePlaceBuilding struct {
 	cst         float64
 	fldTypes    map[int]struct{}
-	newBuilding func(p *playing, pos vector2D) *building
+	newBuilding func(p *playing, pos rect.Field) *building
 }
 
 func (pb *simplePlaceBuilding) cost() float64 {
@@ -40,7 +41,7 @@ func (pb *simplePlaceBuilding) fieldTypes() map[int]struct{} {
 	return pb.fldTypes
 }
 
-func (pb *simplePlaceBuilding) building(p *playing, pos vector2D) *building {
+func (pb *simplePlaceBuilding) building(p *playing, pos rect.Field) *building {
 	return pb.newBuilding(p, pos)
 }
 
@@ -52,7 +53,7 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 		fldTypes: map[int]struct{}{
 			fieldBuildSpot: struct{}{},
 		},
-		newBuilding: func(_ *playing, pos vector2D) *building {
+		newBuilding: func(_ *playing, pos rect.Field) *building {
 			return &building{
 				typ:    "building_income",
 				gridXY: pos,
@@ -65,8 +66,8 @@ var keyPlaceBuildingMapping = map[string]placeBuilding{
 		fldTypes: map[int]struct{}{
 			fieldBuildSpot: struct{}{},
 		},
-		newBuilding: func(p *playing, pos vector2D) *building {
-			x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(pos.X), float64(pos.Y))
+		newBuilding: func(p *playing, pos rect.Field) *building {
+			x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(pos.Column()), float64(pos.Row()))
 			b := &building{
 				typ:    "building_gun",
 				gridXY: pos,
