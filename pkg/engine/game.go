@@ -72,8 +72,8 @@ type State interface {
 type Object struct {
 	Key string
 
-	X int
-	Y int
+	X float64
+	Y float64
 
 	Z int
 

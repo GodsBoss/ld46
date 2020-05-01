@@ -8,8 +8,8 @@ import (
 type building struct {
 	typ       string
 	gridXY    rect.Field
-	x         int
-	y         int
+	x         float64
+	y         float64
 	effect    buildingEffect
 	animation float64
 }

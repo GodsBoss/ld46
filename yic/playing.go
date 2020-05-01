@@ -116,8 +116,8 @@ func (p *playing) HandleKeyEvent(event engine.KeyEvent) *engine.Transition {
 		// Finally, build building.
 		p.buildings[p.gridCursor] = placeBuilding.building(p, p.gridCursor)
 		x, y := p.levels.ChosenLevel().realCoordinateFloat64(float64(p.gridCursor.Column()), float64(p.gridCursor.Row()))
-		p.buildings[p.gridCursor].x = int(x)
-		p.buildings[p.gridCursor].y = int(y)
+		p.buildings[p.gridCursor].x = x
+		p.buildings[p.gridCursor].y = y
 		p.resources -= placeBuilding.cost()
 
 		p.calculateIncomePerSecond()
@@ -137,7 +137,7 @@ func (p *playing) HandleMouseEvent(event engine.MouseEvent) *engine.Transition {
 func (p *playing) Objects() map[string][]engine.Object {
 	p.textManager.Get("resources").SetContent("Resources: " + strconv.Itoa(int(p.resources)))
 	lvl := p.levels.ChosenLevel()
-	headX, headY := lvl.realCoordinate(lvl.headX, lvl.headY)
+	headX, headY := lvl.realCoordinateFloat64(float64(lvl.headX), float64(lvl.headY))
 	objects := map[string][]engine.Object{
 		"background": []engine.Object{
 			engine.Object{
@@ -166,7 +166,7 @@ func (p *playing) Objects() map[string][]engine.Object {
 			if key == "" {
 				continue
 			}
-			rx, ry := lvl.realCoordinate(col, row)
+			rx, ry := lvl.realCoordinateFloat64(float64(col), float64(row))
 			objects["fields"] = append(
 				objects["fields"],
 				engine.Object{
@@ -193,7 +193,10 @@ func (p *playing) Objects() map[string][]engine.Object {
 	objects["entities"] = append(objects["entities"], p.responsibilites.Objects()...)
 
 	if p.levels.ChosenLevel().isOnGrid(p.gridCursor.Column(), p.gridCursor.Row()) {
-		cx, cy := lvl.realCoordinate(p.gridCursor.Column(), p.gridCursor.Row())
+		cx, cy := lvl.realCoordinateFloat64(
+			float64(p.gridCursor.Column()),
+			float64(p.gridCursor.Row()),
+		)
 		key := "grid_cursor_no"
 		if p.levels.ChosenLevel().fields[p.gridCursor.Row()][p.gridCursor.Column()].typ == fieldBuildSpot {
 			key = "grid_cursor"

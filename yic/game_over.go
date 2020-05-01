@@ -73,8 +73,8 @@ func (g *gameOver) Objects() map[string][]engine.Object {
 			objects["entities"],
 			engine.Object{
 				Key:       g.types[i],
-				X:         adultHeadX + 8 + int(gameOverItemsDistance*math.Sin(angle)),
-				Y:         adultHeadY + 8 + int(gameOverItemsDistance*math.Cos(angle)),
+				X:         adultHeadX + 8 + gameOverItemsDistance*math.Sin(angle),
+				Y:         adultHeadY + 8 + gameOverItemsDistance*math.Cos(angle),
 				Animation: g.adultHeadAnimation,
 			},
 		)
@@ -102,8 +102,8 @@ Have a good day!
 `
 
 const (
-	adultHeadX = 182
-	adultHeadY = 180
+	adultHeadX float64 = 182
+	adultHeadY float64 = 180
 )
 
 const (

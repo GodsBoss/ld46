@@ -7,8 +7,8 @@ import (
 )
 
 type fx struct {
-	x              int
-	y              int
+	x              float64
+	y              float64
 	key            string
 	animation      float64
 	animationSpeed float64
@@ -37,8 +37,8 @@ func newFXManager() *fxManager {
 
 func (m *fxManager) addFX(key string, x, y int) {
 	newFX := &fx{
-		x:              x,
-		y:              y,
+		x:              float64(x),
+		y:              float64(y),
 		key:            key,
 		animationSpeed: animationSpeeds[key],
 	}

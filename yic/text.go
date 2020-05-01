@@ -73,8 +73,8 @@ func (t *text) SetContent(s string) {
 				t.objects,
 				engine.Object{
 					Key:   "char_" + chars[i],
-					X:     t.x + i*6*scale,
-					Y:     t.y + j*6,
+					X:     float64(t.x + i*6*scale),
+					Y:     float64(t.y + j*6),
 					Scale: scale,
 				},
 			)

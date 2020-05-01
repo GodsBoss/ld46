@@ -68,8 +68,8 @@ func (renderer *Renderer) drawObject(dest *dom.Context2D, object engine.Object) 
 		sprite.Y,
 		sprite.W,
 		sprite.H,
-		object.X*renderer.zoom(),
-		object.Y*renderer.zoom(),
+		int(object.X)*renderer.zoom(),
+		int(object.Y)*renderer.zoom(),
 		sprite.W*renderer.zoom()*scale,
 		sprite.H*renderer.zoom()*scale,
 	)
